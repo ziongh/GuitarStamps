@@ -1,0 +1,20 @@
+# carimbos — method-style batch (Brazilian "cifragem" notation).
+#   <chord> <inversion> <string-group> [mode]
+#     inversion     pf | 1a | 2a | 3a   (pf* is implicit for rootless 7b9)
+#     string-group  row1 = 6543 (bass str6) · row2 = 5432 (str5) · row3 = 4321 (str4)
+#                   (or write group6543 / group5432 / group4321 directly)
+#     notation      7M = major 7th, 7 = dominant 7th, 3- = minor 3rd
+#   "#" starts a comment · "spec => name" sets the output file name.
+
+# --- the requested case, plus its root-position reference ---
+C7M pf row2    => c7m_pf_5432
+C7M 1a row2    => c7m_1a_5432
+
+# --- the example requests from your spec (section 8) ---
+C7M pf  row1   => c7m_pf_6543
+Bb7 1a  row2   => bb7_1a_5432
+Em7b5 2a row1  => em7b5_2a_6543
+Bb7b9 pf row3  => bb7b9_pfstar_4321
+Bb7b9 3a row3  => bb7b9_3a_4321
+C7M 1a  row1   => c7m_1a_6543
+C6 3a   row2   => c6_3a_5432

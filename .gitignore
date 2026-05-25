@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+
+# Generated chord-diagram output — reproducible from the tool + specs:
+#   bun run examples   (-> diagrams/)   ·   bun run book.example.ts   (-> book/)
+#   bun run cli.ts "..."   (-> ./<slug>.svg)
+/diagrams/
+/book/
+/*.svg
+
+# Local preview / scratch files (e.g. headless-browser screenshots)
+_*
+*.tmp
+
+# Working documents (book manuscript, prompt drafts, exports)
+*.docx
+*.pdf
+
+# Editor / OS noise
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Env / logs
+.env
+.env.*
+*.log

@@ -1,0 +1,13 @@
+{
+  "name": "carimbos",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Generate guitar chord-diagram SVGs (Drop-2 voicings, inversions, any start string) for method books.",
+  "module": "src/index.ts",
+  "scripts": {
+    "carimbo": "bun run cli.ts",
+    "examples": "bun run cli.ts --batch chords.example.txt --outdir diagrams --gallery",
+    "book": "bun run book.example.ts",
+    "test": "bun test"
+  }
+}
