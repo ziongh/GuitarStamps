@@ -18,50 +18,50 @@ import {
   type LabelMode,
 } from "./src/index";
 
-const HELP = `carimbos — generate guitar chord-diagram SVGs (Drop-2 voicings & more)
+const HELP = `carimbos — gera diagramas de acordes (carimbos) em SVG (voicings Drop-2 e mais)
 
-USAGE
-  bun run cli.ts "<spec>" [options]
-  bun run cli.ts --frets "x x 9 9 9 9" [chord] [options]
-  bun run cli.ts --batch <file> --outdir <dir> [--gallery] [options]
+USO
+  bun run cli.ts "<pedido>" [opções]
+  bun run cli.ts --frets "x x 9 9 9 9" [acorde] [opções]
+  bun run cli.ts --batch <arquivo> --outdir <pasta> [--gallery] [opções]
 
-SPEC GRAMMAR
-  "<chord> [inversion] [string] [mode] [minfret] [labels] [style]"
-    chord       almost any symbol, composed from building blocks (7M=maj7, 7=dominant):
-                triads m/dim/aug/sus/5 · 6/7/9/11/13 · alterations b5 #5 b9 #9 #11 b13
-                · add9/no3/omit5 · alt (altered dom) · slash bass C/G, Dm7/G
-                e.g.  C7M  Cm7b5  C13#11  Cmaj7#11  Bb7alt  Cm(maj7)  C/E  F#m11
-    inversion   pf | 1a | 2a | 3a   (also root|1st|2nd|3rd, inv0..inv5)
-    string      str5 | row2 | group5432   (where the BASS note sits)
-                row1=group6543 (str6), row2=group5432 (str5), row3=group4321 (str4)
-    mode        drop2 (default for 4-note) | stacked | triad
-    minfret     min7  (push the grip up to/above fret 7)
-    labels      labels:degree (default) | labels:note | labels:none
-    style       method (default; PT notation + voice legend) | plain
-  e.g.  "C7M pf row2"     "C7M 1a row2"     "Bb7b9 pf group4321"     "Dmaj13 3a row1 stacked"
+GRAMÁTICA DO PEDIDO
+  "<acorde> [inversão] [corda] [modo] [traste-mín] [rótulos] [estilo]"
+    acorde      quase qualquer cifra, montada por blocos (7M=sétima maior, 7=dominante):
+                tríades m/dim/aug/sus/5 · 6/7/9/11/13 · alterações b5 #5 b9 #9 #11 b13
+                · add9/no3/omit5 · alt (dominante alterado) · baixo com barra C/G, Dm7/G
+                ex.:  C7M  Cm7b5  C13#11  Cmaj7#11  Bb7alt  Cm(maj7)  C/E  F#m11
+    inversão    pf | 1a | 2a | 3a   (também root|1st|2nd|3rd, inv0..inv5)
+    corda       str5 | row2 | group5432   (onde fica o BAIXO)
+                row1=group6543 (6ª corda), row2=group5432 (5ª), row3=group4321 (4ª)
+    modo        drop2 (padrão p/ 4 notas) | stacked (empilhado) | triad (tríade)
+    traste-mín  min7  (empurra a pegada para o 7º traste ou acima)
+    rótulos     labels:degree (padrão) | labels:note | labels:none
+    estilo      method (padrão; notação pt-BR + legenda de vozes)
+  ex.:  "C7M pf row2"     "C7M 1a row2"     "Bb7b9 pf group4321"     "Dmaj13 3a row1 stacked"
 
-OPTIONS
-  -o, --out <file>      output file (single mode; default ./<slug>.svg)
-      --stdout          print SVG to stdout instead of writing a file
-      --batch <file>    read one spec per line (# comments; "spec => name" sets file name)
-      --outdir <dir>    output directory for --batch (default ./diagrams)
-      --gallery         also write an index.html contact sheet (with --batch)
-      --frets "<6>"     explicit frets low->high, e.g. "x x 9 9 9 9"
-      --inv <n>         inversion (overrides spec)
-      --start <1-6>     bass string (overrides spec)
+OPÇÕES
+  -o, --out <arquivo>   arquivo de saída (modo avulso; padrão ./<nome>.svg)
+      --stdout          mostra o SVG na tela em vez de gravar um arquivo
+      --batch <arquivo> lê um pedido por linha (# = comentário; "pedido => nome" define o nome do arquivo)
+      --outdir <pasta>  pasta de saída do --batch (padrão ./diagrams)
+      --gallery         gera também uma página index.html com todos os carimbos (com --batch)
+      --frets "<6>"     trastes manuais, do grave ao agudo, ex.: "x x 9 9 9 9"
+      --inv <n>         inversão (sobrescreve o pedido)
+      --start <1-6>     corda do baixo (sobrescreve o pedido)
       --mode <m>        auto | drop2 | stacked | triad
-      --style <s>       method (default) | plain        --plain   shortcut for plain
-      --min <n>         minimum fret (push grip up the neck)
+      --style <s>       method (padrão)   (o estilo 'plain' está desativado por enquanto)
+      --min <n>         traste mínimo (empurra a pegada neck acima)
       --label <m>       degree | note | none
-      --title "<t>"     custom title
-      --no-subtitle     hide the auto subtitle
-      --tuning "<6>"    e.g. "E,A,D,G,B,E" (low->high) or "D,A,D,G,B,E"
-      --strict          keep strict enharmonic spelling (E𝄫 etc.) in note labels
-      --accent "<col>"  colour for the bass-note ring (default = ink)
-      --ink "<col>"     line/dot colour (default #1b1b1b)
-      --paper "<col>"   background (default none/transparent)
-      --scale <f>       size multiplier (default 1)
-  -h, --help            show this help
+      --title "<t>"     título personalizado
+      --no-subtitle     esconde o subtítulo automático
+      --tuning "<6>"    ex.: "E,A,D,G,B,E" (grave->agudo) ou "D,A,D,G,B,E"
+      --strict          mantém a grafia enarmônica rigorosa (E𝄫 etc.) nos rótulos de nota
+      --accent "<cor>"  cor do anel do baixo (padrão = cor do traço)
+      --ink "<cor>"     cor das linhas/bolinhas (padrão #1b1b1b)
+      --paper "<cor>"   cor do fundo (padrão nenhuma/transparente)
+      --scale <f>       multiplicador de tamanho (padrão 1)
+  -h, --help            mostra esta ajuda
 `;
 
 interface Args {
@@ -147,14 +147,14 @@ async function runBatch(file: string, flags: Record<string, string | boolean>) {
     const cards = made
       .map((m) => `<figure><div class="d">${m.svg}</div><figcaption>${escapeHtml(m.spec)}</figcaption></figure>`)
       .join("\n");
-    const html = `<!doctype html><meta charset="utf-8"><title>carimbos — contact sheet</title>
+    const html = `<!doctype html><meta charset="utf-8"><title>carimbos — folha de contato</title>
 <style>body{font:14px/1.4 'Helvetica Neue',Arial,sans-serif;background:#fafafa;color:#222;margin:24px}
 h1{font-weight:600}.grid{display:flex;flex-wrap:wrap;gap:20px}
 figure{margin:0;background:#fff;border:1px solid #e6e6e6;border-radius:10px;padding:14px;text-align:center}
 .d svg{height:230px;width:auto}figcaption{margin-top:8px;color:#555;font-family:monospace}</style>
-<h1>carimbos — ${made.length} diagram(s)</h1><div class="grid">${cards}</div>`;
+<h1>carimbos — ${made.length} diagrama(s)</h1><div class="grid">${cards}</div>`;
     await writeFile(join(outdir, "index.html"), html);
-    console.log(`\n📄 gallery: ${join(outdir, "index.html")}`);
+    console.log(`\n📄 galeria: ${join(outdir, "index.html")}`);
   }
 }
 
@@ -195,10 +195,10 @@ async function main() {
   }
   const out = String(flags.out ?? flags.o ?? `${slugify(label)}.svg`);
   await writeFile(out, res.svg);
-  console.log(`✓ wrote ${out}`);
+  console.log(`✓ gravado: ${out}`);
 }
 
 main().catch((e) => {
-  console.error("Error:", (e as Error).message);
+  console.error("Erro:", (e as Error).message);
   process.exit(1);
 });

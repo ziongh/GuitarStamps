@@ -61,7 +61,16 @@ export function makeDiagram(opts: DiagramOptions): DiagramResult {
   const startString = opts.startString ?? 4;
   const labels: LabelMode = opts.labels ?? "degree";
 
-  const style: DiagramStyle = opts.style ?? "method";
+  // Only the Brazilian "method" style is available for now: it is the one that
+  // renders fully in pt-BR (cifragem 7M/7/3-, PF/1ª I, "› 1ª voz"). The "plain"
+  // style emits English degree notation, so a request for it falls back to
+  // "method" and a notice is added to the warnings.
+  let style: DiagramStyle = opts.style ?? "method";
+  const styleWarnings: string[] = [];
+  if (style === "plain") {
+    style = "method";
+    styleWarnings.push("o estilo 'plain' está desativado por enquanto — gerando no estilo método (notação pt-BR).");
+  }
 
   // ---- explicit-fret mode ----
   if (opts.frets) {
@@ -77,11 +86,11 @@ export function makeDiagram(opts: DiagramOptions): DiagramResult {
       const subtitle = opts.subtitle === undefined ? null : opts.subtitle;
       svg = renderSvg(res.positions, { ...opts.svg, title, subtitle, labels: chord ? labels : "note" });
     }
-    return { svg, positions: res.positions, chord, inversion, startString, mode: "drop2", warnings: res.warnings };
+    return { svg, positions: res.positions, chord, inversion, startString, mode: "drop2", warnings: [...res.warnings, ...styleWarnings] };
   }
 
   // ---- theory-driven mode ----
-  if (!opts.chord) throw new Error("Provide either `chord` or `frets`.");
+  if (!opts.chord) throw new Error("Forneça um acorde (`chord`) ou os trastes (`frets`).");
   const chord = parseChord(opts.chord);
 
   let mode = opts.mode ?? "auto";
@@ -136,7 +145,7 @@ export function makeDiagram(opts: DiagramOptions): DiagramResult {
     svg = renderSvg(res.positions, { ...opts.svg, title, subtitle, labels, notePrefer });
   }
 
-  return { svg, positions: res.positions, chord, inversion, startString, mode, warnings: res.warnings };
+  return { svg, positions: res.positions, chord, inversion, startString, mode, warnings: [...res.warnings, ...styleWarnings] };
 }
 
 // ---- Brazilian method-style helpers ----
@@ -179,7 +188,7 @@ const INV_WORDS: Record<string, number> = {
 
 export function parseSpec(spec: string): DiagramOptions {
   const tokens = spec.trim().split(/\s+/).filter(Boolean);
-  if (tokens.length === 0) throw new Error("Empty spec");
+  if (tokens.length === 0) throw new Error("Pedido vazio.");
   const out: DiagramOptions = { chord: tokens[0] };
   const unknown: string[] = [];
 
@@ -200,7 +209,7 @@ export function parseSpec(spec: string): DiagramOptions {
     else if ((m = tok.match(/^labels?[:=](degree|note|none)$/))) out.labels = m[1] as LabelMode;
     else unknown.push(tokRaw);
   }
-  if (unknown.length) throw new Error(`Unrecognized spec token(s): ${unknown.join(", ")}`);
+  if (unknown.length) throw new Error(`Termo(s) não reconhecido(s) no pedido: ${unknown.join(", ")}`);
   return out;
 }
 

@@ -28,12 +28,12 @@ const POS_OCTAVES = [2, 2, 3, 3, 3, 4];
  */
 export function parseTuning(spec: string): Tuning {
   const names = spec.split(/[\s,]+/).filter(Boolean);
-  if (names.length !== 6) throw new Error(`Tuning needs 6 notes low->high, got ${names.length}: "${spec}"`);
+  if (names.length !== 6) throw new Error(`A afinação precisa de 6 notas, do grave ao agudo; recebi ${names.length}: "${spec}"`);
   const open: Record<number, number> = {};
   names.forEach((raw, i) => {
     const s = raw.replace(/♯/g, "#").replace(/♭/g, "b");
     const m = s.match(/^([A-Ga-g][#b]*)(-?\d+)?$/);
-    if (!m) throw new Error(`Invalid tuning note: "${raw}"`);
+    if (!m) throw new Error(`Nota de afinação inválida: "${raw}"`);
     let alter = 0;
     const letterMatch = m[1].match(/^([A-Ga-g])([#b]*)$/)!;
     for (const c of letterMatch[2]) alter += c === "#" ? 1 : -1;
@@ -137,12 +137,12 @@ export function drop2Voicing(
   minFret = 0,
   preferNoOpen = false,
 ): VoicingResult {
-  if (tones4.length !== 4) throw new Error(`Drop-2 needs exactly 4 tones, got ${tones4.length}`);
-  if (bassIndex < 0 || bassIndex > 3) throw new Error(`Inversion for a 4-note chord must be 0..3, got ${bassIndex}`);
+  if (tones4.length !== 4) throw new Error(`O Drop-2 precisa de exatamente 4 notas; recebi ${tones4.length}.`);
+  if (bassIndex < 0 || bassIndex > 3) throw new Error(`A inversão de um acorde de 4 notas deve ser 0..3; recebi ${bassIndex}.`);
   if (startString < 4 || startString > 6) {
     throw new Error(
-      `Drop-2 uses 4 adjacent strings, so the bass (start) string must be 4, 5 or 6 ` +
-        `(got ${startString}). For a voicing on the top strings, use mode "stacked".`,
+      `O Drop-2 ocupa 4 cordas adjacentes, então a corda do baixo deve ser a 6ª, 5ª ou 4ª ` +
+        `(recebi a ${startString}ª). Para um voicing nas cordas agudas, use o modo "stacked".`,
     );
   }
   // Drop-2 voice order for a given bass index b (low->high):
@@ -167,14 +167,14 @@ export function stackedVoicing(
   preferNoOpen = false,
 ): VoicingResult {
   const n = tones.length;
-  if (bassIndex < 0 || bassIndex >= n) throw new Error(`Inversion must be 0..${n - 1} for this chord, got ${bassIndex}`);
+  if (bassIndex < 0 || bassIndex >= n) throw new Error(`A inversão deve ser 0..${n - 1} para este acorde; recebi ${bassIndex}.`);
   const available = startString; // strings startString, startString-1, ... down to 1
   const count = Math.min(n, available);
   const warnings: string[] = [];
   if (count < n) {
     warnings.push(
-      `${n}-note chord but only ${available} string(s) above string ${startString}; ` +
-        `voiced the lowest ${count} tones. Start lower (string 5/6) to fit them all.`,
+      `acorde de ${n} notas, mas só há ${available} corda(s) a partir da ${startString}ª; ` +
+        `foram tocadas as ${count} notas mais graves. Comece numa corda mais grave (5ª/6ª) para caberem todas.`,
     );
   }
   const order: ChordTone[] = [];
@@ -197,7 +197,7 @@ export function explicitVoicing(
   chordTones?: ChordTone[],
 ): VoicingResult {
   const tokens = fretSpec.trim().split(/[\s,]+/).filter(Boolean);
-  if (tokens.length !== 6) throw new Error(`Explicit frets need 6 values low->high (use x for muted), got ${tokens.length}`);
+  if (tokens.length !== 6) throw new Error(`Os trastes manuais precisam de 6 valores, do grave ao agudo (use x para corda abafada); recebi ${tokens.length}.`);
   const pcToTone = new Map<number, ChordTone>();
   chordTones?.forEach((t) => { if (!pcToTone.has(t.pc)) pcToTone.set(t.pc, t); });
 
@@ -207,7 +207,7 @@ export function explicitVoicing(
     const stringNumber = 6 - i;
     if (/^[xX\-]$/.test(tok)) return; // muted
     const fret = parseInt(tok, 10);
-    if (Number.isNaN(fret) || fret < 0) throw new Error(`Invalid fret "${tok}"`);
+    if (Number.isNaN(fret) || fret < 0) throw new Error(`Traste inválido "${tok}".`);
     const open = tuning.open[stringNumber];
     const midi = open + fret;
     const pc = ((midi % 12) + 12) % 12;

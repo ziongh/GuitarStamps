@@ -27,7 +27,7 @@ limpo, em alta qualidade, pronto para o livro.
 7. [Escrevendo (quase) qualquer acorde](#7-escrevendo-quase-qualquer-acorde)
 8. [Como a ferramenta monta as vozes](#8-como-a-ferramenta-monta-as-vozes)
 9. [Gerando o método inteiro de uma vez](#9-gerando-o-método-inteiro-de-uma-vez)
-10. [Os dois estilos de desenho](#10-os-dois-estilos-de-desenho)
+10. [O estilo de desenho (pt-BR)](#10-o-estilo-de-desenho-pt-br)
 11. [Transformando os SVGs em PDF/PNG para imprimir](#11-transformando-os-svgs-em-pdfpng-para-imprimir)
 12. [Tabela de todas as opções](#12-tabela-de-todas-as-opções)
 13. [Quando algo dá errado](#13-quando-algo-dá-errado)
@@ -43,9 +43,9 @@ trastes certos, os números dos dedos/graus, o nome do acorde por cima.
 - **Motor de vozes** — transforma *cifra + inversão + corda do baixo* em
   posições reais no braço. Faz **Drop-2** (o padrão), além de modos
   *empilhado*, *tríade* e *manual*.
-- **Dois estilos de desenho** — um estilo **método** (cifragem brasileira:
-  braço cinza, número do traste, notação `7M`/`7`/`3-`, legenda das vozes — é o
-  padrão) e um estilo **plain**, mais parecido com um *chart* de jazz americano.
+- **Estilo de desenho em pt-BR** — o estilo **método** (cifragem brasileira:
+  braço cinza, número do traste, notação `7M`/`7`/`3-`, legenda das vozes). Por
+  ora a ferramenta gera **só em português** — nada de notação ou texto em inglês.
 - **Sem complicação de instalação** — depende de um único programa gratuito
   (o [Bun](https://bun.sh)). Nada de "instalar mil coisas".
 
@@ -167,10 +167,10 @@ Tradução do pedido: *C♯ menor com sétima, **3ª inversão** (baixo na 7ª),
 baixo na **4ª corda**.* A ferramenta responde algo como:
 
 ```
-✓ wrote csharpm7_3rd_str4.svg
+✓ gravado: csharpm7_3rd_str4.svg
 ```
 
-Esse `✓ wrote ...` quer dizer: **"pronto, gravei o arquivo de imagem"**. O nome
+Esse `✓ gravado: ...` quer dizer: **"pronto, gravei o arquivo de imagem"**. O nome
 do arquivo (`csharpm7_3rd_str4.svg`) foi montado a partir do seu pedido, e ele
 foi salvo **dentro da própria pasta `carimbos`**.
 
@@ -215,7 +215,7 @@ Só o **acorde** é obrigatório. Os demais campos têm padrões sensatos.
 | **modo**         | `drop2` (padrão) · `stacked` · `triad` | como as vozes são distribuídas (veja [seção 8](#8-como-a-ferramenta-monta-as-vozes)) |
 | **traste mínimo** | `min7` | empurra a pegada para cima, a partir do 7º traste |
 | **rótulos**      | `labels:degree` (padrão) · `labels:note` · `labels:none` | o que vai escrito dentro das bolinhas |
-| **estilo**       | `method` (padrão) · `plain` | o visual do desenho (veja [seção 10](#10-os-dois-estilos-de-desenho)) |
+| **estilo**       | `method` (padrão) | o visual do desenho — por ora só o pt-BR (veja [seção 10](#10-o-estilo-de-desenho-pt-br)) |
 
 ### Inversão — qual nota está no baixo
 
@@ -427,23 +427,28 @@ um método precisa.
 
 ---
 
-## 10. Os dois estilos de desenho
+## 10. O estilo de desenho (pt-BR)
 
-**`method`** (padrão) — o formato do seu método: braço cinza-claro, número do
-traste à esquerda, trastes grossos, **cifragem brasileira** (`7M`, `7`, `3-`,
-`b5`…), o subtítulo da inversão (`PF`, `1ª I`, `2ª I`, `3ª I`, e `PF*` para o
-`7b9` sem fundamental) e uma **legenda das vozes** (`3 › 1ª voz`, … do agudo para
-o grave). As pegadas são sempre **totalmente pisadas** (sem cordas soltas). Para
-o resultado ficar idêntico à sua referência, instale a fonte gratuita **Inter**
-(sem ela, o desenho usa uma fonte do sistema parecida).
+Por enquanto a ferramenta desenha em **um único estilo, todo em português** — sem
+nenhuma notação ou texto em inglês na imagem gerada. É o estilo **`method`**, o
+formato do seu método:
 
-**`plain`** — um *chart* de jazz mais genérico: indicação de pestana/posição,
-marcadores de corda solta `○` e abafada `✕`, graus em inglês (`1 b3 5 b7`) e um
-anel opcional no baixo. Para usá-lo, é só acrescentar `plain` ao pedido:
+- braço cinza-claro, número do traste à esquerda, trastes grossos;
+- **cifragem brasileira** nas bolinhas (`7M` = sétima maior, `7` = sétima
+  dominante/menor, `3-` = terça menor, `b5`, `#11`…);
+- subtítulo da inversão em português (`PF`, `1ª I`, `2ª I`, `3ª I`, e `PF*` para o
+  `7b9` sem fundamental);
+- uma **legenda das vozes** (`› 1ª voz`, `› 2ª voz`… do agudo para o grave);
+- pegadas sempre **totalmente pisadas** (sem cordas soltas).
 
-```
-bun run cli.ts "C#m7 3rd str4 plain"
-```
+Para o resultado ficar idêntico à sua referência, instale a fonte gratuita
+**Inter** (sem ela, o desenho usa uma fonte do sistema parecida).
+
+> **E o estilo "plain"?** O código tem um segundo estilo, mais parecido com um
+> *chart* de jazz americano — mas ele escreve em **inglês** (graus `1 b3 5 b7`,
+> rótulos como `3fr`). Como combinamos **só pt-BR por enquanto**, esse estilo está
+> **desativado**: se você pedir `plain`, a ferramenta avisa e gera no estilo
+> método mesmo. Quando quiser ativá-lo (já traduzido), é só pedir.
 
 ---
 
@@ -529,18 +534,18 @@ reabriu o terminal** depois de instalar.
 pasta `carimbos`. Refaça o passo da [seção 4](#4-abrindo-o-terminal-na-pasta-certa)
 para abrir o terminal na pasta certa.
 
-**Apareceu `Unrecognized spec token(s): ...`** A ferramenta não entendeu uma das
-palavras do seu pedido (talvez um campo escrito com grafia diferente). Confira a
-tabela da [seção 6](#6-a-linguagem-do-pedido-a-parte-musical). A cifra precisa
-ser **uma palavra só, sem espaços** (`C13#11`, não `C13 #11`).
+**Apareceu `Termo(s) não reconhecido(s) no pedido: ...`** A ferramenta não
+entendeu uma das palavras do seu pedido (talvez um campo escrito com grafia
+diferente). Confira a tabela da [seção 6](#6-a-linguagem-do-pedido-a-parte-musical).
+A cifra precisa ser **uma palavra só, sem espaços** (`C13#11`, não `C13 #11`).
 
 **Gerei o arquivo mas não acho a imagem.** Por padrão ela é salva **dentro da
 pasta `carimbos`** (ou na pasta que você indicou com `-o`/`--outdir`). O terminal
-sempre te diz o caminho exato na linha `✓ wrote ...`.
+sempre te diz o caminho exato na linha `✓ gravado: ...`.
 
 **O acorde saiu com a fonte "errada".** O estilo `method` fica idêntico à
 referência com a fonte **Inter** instalada; sem ela, usa uma fonte parecida do
-sistema. Veja a [seção 10](#10-os-dois-estilos-de-desenho).
+sistema. Veja a [seção 10](#10-o-estilo-de-desenho-pt-br).
 
 ---
 

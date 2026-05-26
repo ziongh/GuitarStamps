@@ -29,7 +29,7 @@ for (const chord of chords) {
         inversion: inv,
         startString: g.startString,
         mode: "drop2",
-        style: "method", // Brazilian notation + voice legend
+        style: "method", // cifragem brasileira + legenda de vozes
       });
       await Bun.write(join(OUT, `${slugify(chord)}_g${g.name}_inv${inv}.svg`), svg);
       count++;
@@ -37,4 +37,4 @@ for (const chord of chords) {
   }
 }
 
-console.log(`Wrote ${count} method-style diagrams to ./${OUT}/`);
+console.log(`Gravados ${count} diagramas no estilo método em ./${OUT}/`);

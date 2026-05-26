@@ -52,7 +52,7 @@ export function noteDisplay(
 
 export function parseNote(s: string): Note {
   const m = s.trim().replace(/♯/g, "#").replace(/♭/g, "b").match(/^([A-Ga-g])([#b]*)$/);
-  if (!m) throw new Error(`Invalid note: "${s}"`);
+  if (!m) throw new Error(`Nota inválida: "${s}"`);
   let alter = 0;
   for (const c of m[2]) alter += c === "#" ? 1 : -1;
   return { letter: m[1].toUpperCase(), alter };
@@ -79,11 +79,11 @@ export interface Degree {
 
 export function parseDegree(token: string): Degree {
   const m = token.match(/^([#b]*)(\d+)$/);
-  if (!m) throw new Error(`Invalid degree token: "${token}"`);
+  if (!m) throw new Error(`Grau inválido: "${token}"`);
   let alter = 0;
   for (const c of m[1]) alter += c === "#" ? 1 : -1;
   const number = parseInt(m[2], 10);
-  if (!(number in DEGREE_SEMITONE)) throw new Error(`Unsupported degree: ${number}`);
+  if (!(number in DEGREE_SEMITONE)) throw new Error(`Grau não suportado: ${number}`);
   return { token, number, alter, semitone: DEGREE_SEMITONE[number] + alter };
 }
 
@@ -276,7 +276,7 @@ export function analyzeQuality(raw: string): string[] {
 
   const nums = q.match(/13|11|9|7|6|5|4|2/g) || [];
   q = q.replace(/13|11|9|7|6|5|4|2/g, "").trim();
-  if (q !== "") throw new Error(`unrecognized chord text "${raw}"`);
+  if (q !== "") throw new Error(`trecho de acorde não reconhecido "${raw}"`);
 
   const num = (n: string) => nums.includes(n);
   const isPower = nums.length === 1 && num("5") && !isMinor && !isDim && !isAug && !hasMaj7 && !sus && !sixNine && !altDom && addsRaw.length === 0 && alts.size === 0;
@@ -361,7 +361,7 @@ export function parseChord(symbol: string): ParsedChord {
   if (slash) { clean = slash[1]; bass = parseNote(slash[2]); }
 
   const m = clean.match(/^([A-Ga-g][#b]*)(.*)$/);
-  if (!m) throw new Error(`Cannot parse chord: "${symbol}"`);
+  if (!m) throw new Error(`Não foi possível interpretar o acorde: "${symbol}"`);
   const root = parseNote(m[1]);
   const remainder = m[2];
 
@@ -383,7 +383,7 @@ export function parseChord(symbol: string): ParsedChord {
       toneTokens = analyzeQuality(remainder);
     } catch {
       const known = [...new Set(QUALITIES.map((q) => q.names[0]))].join(", ");
-      throw new Error(`Unknown chord quality "${remainder}" in "${symbol}".\nKnown qualities: ${known}`);
+      throw new Error(`Qualidade de acorde desconhecida "${remainder}" em "${symbol}".\nQualidades conhecidas: ${known}`);
     }
     drop2Tokens = toneTokens.length <= 4 ? toneTokens : reduceToFour(toneTokens);
     display = prettyQuality(remainder);

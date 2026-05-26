@@ -1,16 +1,16 @@
-# carimbos — method-style batch (Brazilian "cifragem" notation).
-#   <chord> <inversion> <string-group> [mode]
-#     inversion     pf | 1a | 2a | 3a   (pf* is implicit for rootless 7b9)
-#     string-group  row1 = 6543 (bass str6) · row2 = 5432 (str5) · row3 = 4321 (str4)
-#                   (or write group6543 / group5432 / group4321 directly)
-#     notation      7M = major 7th, 7 = dominant 7th, 3- = minor 3rd
-#   "#" starts a comment · "spec => name" sets the output file name.
+# carimbos — lista em lote (cifragem brasileira).
+#   <acorde> <inversão> <grupo-de-cordas> [modo]
+#     inversão       pf | 1a | 2a | 3a   (pf* é implícito no 7b9 sem fundamental)
+#     grupo-de-cordas  row1 = 6543 (baixo na 6ª corda) · row2 = 5432 (5ª) · row3 = 4321 (4ª)
+#                      (ou escreva group6543 / group5432 / group4321 diretamente)
+#     notação        7M = sétima maior, 7 = sétima dominante, 3- = terça menor
+#   "#" começa um comentário · "pedido => nome" define o nome do arquivo de saída.
 
-# --- the requested case, plus its root-position reference ---
+# --- o caso pedido, mais sua referência em posição fundamental ---
 C7M pf row2    => c7m_pf_5432
 C7M 1a row2    => c7m_1a_5432
 
-# --- the example requests from your spec (section 8) ---
+# --- exemplos da sua especificação (seção 8) ---
 C7M pf  row1   => c7m_pf_6543
 Bb7 1a  row2   => bb7_1a_5432
 Em7b5 2a row1  => em7b5_2a_6543
