@@ -274,7 +274,7 @@ export function analyzeQuality(raw: string): string[] {
   const isAug = consume(/aug/);
   const isMinor = consume(/m/);
 
-  const nums = q.match(/13|11|9|7|6|5|4|2/g) || [];
+  const nums: string[] = q.match(/13|11|9|7|6|5|4|2/g) ?? [];
   q = q.replace(/13|11|9|7|6|5|4|2/g, "").trim();
   if (q !== "") throw new Error(`trecho de acorde não reconhecido "${raw}"`);
 

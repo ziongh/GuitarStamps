@@ -9,13 +9,11 @@
 import { mkdir } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import {
+  diagramFromArgs,
   diagramFromSpec,
-  makeDiagram,
-  parseSpec,
-  parseTuning,
+  optionsFromFlags,
+  parseArgs,
   slugify,
-  type DiagramOptions,
-  type LabelMode,
 } from "./src/index";
 
 const HELP = `carimbos — gera diagramas de acordes (carimbos) em SVG (voicings Drop-2 e mais)
@@ -32,8 +30,8 @@ GRAMÁTICA DO PEDIDO
                 · add9/no3/omit5 · alt (dominante alterado) · baixo com barra C/G, Dm7/G
                 ex.:  C7M  Cm7b5  C13#11  Cmaj7#11  Bb7alt  Cm(maj7)  C/E  F#m11
     inversão    pf | 1a | 2a | 3a   (também root|1st|2nd|3rd, inv0..inv5)
-    corda       str5 | row2 | group5432   (onde fica o BAIXO)
-                row1=group6543 (6ª corda), row2=group5432 (5ª), row3=group4321 (4ª)
+    corda       str5 | row2 | group5432 | jogo5432   (onde fica o BAIXO)
+                row1=jogo6543 (6ª corda), row2=jogo5432 (5ª), row3=jogo4321 (4ª)
     modo        drop2 (padrão p/ 4 notas) | stacked (empilhado) | triad (tríade)
     traste-mín  min7  (empurra a pegada para o 7º traste ou acima)
     rótulos     labels:degree (padrão) | labels:note | labels:none
@@ -63,52 +61,6 @@ OPÇÕES
       --scale <f>       multiplicador de tamanho (padrão 1)
   -h, --help            mostra esta ajuda
 `;
-
-interface Args {
-  positionals: string[];
-  flags: Record<string, string | boolean>;
-}
-
-function parseArgs(argv: string[]): Args {
-  const valueFlags = new Set([
-    "-o", "--out", "--batch", "--outdir", "--frets", "--inv", "--inversion",
-    "--start", "--string", "--mode", "--min", "--minfret", "--label", "--labels",
-    "--title", "--tuning", "--accent", "--ink", "--paper", "--scale", "--style",
-  ]);
-  const positionals: string[] = [];
-  const flags: Record<string, string | boolean> = {};
-  for (let i = 0; i < argv.length; i++) {
-    const a = argv[i];
-    if (a.startsWith("-")) {
-      if (valueFlags.has(a)) flags[a.replace(/^-+/, "")] = argv[++i];
-      else flags[a.replace(/^-+/, "")] = true;
-    } else positionals.push(a);
-  }
-  return { positionals, flags };
-}
-
-function optionsFromFlags(flags: Record<string, string | boolean>): Partial<DiagramOptions> {
-  const o: Partial<DiagramOptions> = {};
-  const svg: NonNullable<DiagramOptions["svg"]> = {};
-  if (flags.frets) o.frets = String(flags.frets);
-  if (flags.inv ?? flags.inversion) o.inversion = parseInt(String(flags.inv ?? flags.inversion), 10);
-  if (flags.start ?? flags.string) o.startString = parseInt(String(flags.start ?? flags.string), 10);
-  if (flags.mode) o.mode = String(flags.mode) as DiagramOptions["mode"];
-  if (flags.style) o.style = String(flags.style) as DiagramOptions["style"];
-  if (flags.plain) o.style = "plain";
-  if (flags.min ?? flags.minfret) o.minFret = parseInt(String(flags.min ?? flags.minfret), 10);
-  if (flags.label ?? flags.labels) o.labels = String(flags.label ?? flags.labels) as LabelMode;
-  if (flags.title) o.title = String(flags.title);
-  if (flags["no-subtitle"]) o.subtitle = null;
-  if (flags.tuning) o.tuning = parseTuning(String(flags.tuning));
-  if (flags.accent) svg.accent = String(flags.accent);
-  if (flags.ink) svg.ink = String(flags.ink);
-  if (flags.paper) svg.paper = String(flags.paper);
-  if (flags.scale) svg.scale = parseFloat(String(flags.scale));
-  if (flags.strict) svg.simplify = false;
-  o.svg = svg;
-  return o;
-}
 
 async function writeFile(path: string, content: string) {
   await mkdir(dirname(path) || ".", { recursive: true });
@@ -174,18 +126,10 @@ async function main() {
     return;
   }
 
-  const base = optionsFromFlags(flags);
-  let res;
-  let label: string;
-  if (flags.frets) {
-    if (positionals[0]) base.chord = positionals[0]; // optional chord for labels/title
-    res = makeDiagram(base);
-    label = String(flags.title ?? base.chord ?? "chord");
-  } else {
-    const spec = positionals[0];
-    res = makeDiagram({ ...parseSpec(spec), ...base });
-    label = spec;
-  }
+  const res = diagramFromArgs({ positionals, flags });
+  const label = flags.frets
+    ? String(flags.title ?? positionals[0] ?? "chord")
+    : positionals.join(" ");
 
   for (const w of res.warnings) console.error(`⚠ ${w}`);
 

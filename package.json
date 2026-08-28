@@ -1,13 +1,40 @@
 {
-  "name": "carimbos",
+  "name": "guitarstamps",
   "version": "0.1.0",
+  "description": "Carimbos: guitar chord-diagram SVG generator (Drop-2 voicings, inversions, string sets) for method books — pt-BR cifragem.",
   "type": "module",
-  "description": "Generate guitar chord-diagram SVGs (Drop-2 voicings, inversions, any start string) for method books.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ziongh/GuitarStamps.git"
+  },
+  "homepage": "https://ziongh.github.io/GuitarStamps/",
+  "keywords": ["guitar", "chord", "diagram", "svg", "drop-2", "voicing", "cifragem"],
   "module": "src/index.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "bun": "./src/index.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "bin": {
+    "carimbos": "./cli.ts"
+  },
+  "files": ["src", "dist", "cli.ts", "README.md"],
   "scripts": {
     "carimbo": "bun run cli.ts",
     "examples": "bun run cli.ts --batch chords.example.txt --outdir diagrams --gallery",
     "book": "bun run book.example.ts",
-    "test": "bun test"
+    "site": "bash site/build.sh",
+    "test": "bun test",
+    "build": "bun run build:js && bun run build:types",
+    "build:js": "bun build src/index.ts --outdir dist --target node",
+    "build:types": "bun x tsc -p tsconfig.build.json",
+    "prepare": "bun run build"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.0"
   }
 }

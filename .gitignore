@@ -30,3 +30,6 @@ Thumbs.db
 
 # Static site build output (site/build.sh -> GitHub Pages via Actions)
 /site/dist/
+
+# Package build output (bun run build -> dist/; rebuilt by prepare/prepack)
+/dist/

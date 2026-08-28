@@ -17,6 +17,9 @@ import {
 import { renderSvg, type LabelMode, type SvgOptions } from "./svg";
 import { renderMethodSvg } from "./method";
 
+import { optionsFromFlags, parseArgs, tokenize, type ParsedArgs } from "./cliargs";
+
+export * from "./cliargs";
 export * from "./theory";
 export * from "./voicing";
 export * from "./svg";
@@ -200,7 +203,7 @@ export function parseSpec(spec: string): DiagramOptions {
     else if ((m = tok.match(/^(?:str|string|s|from)[:=]?([1-6])$/))) out.startString = parseInt(m[1], 10);
     // "row" = string-group shorthand: row1 -> bass on string 6, row2 -> 5, row3 -> 4
     else if ((m = tok.match(/^row[:=]?([1-3])$/))) out.startString = 7 - parseInt(m[1], 10);
-    else if ((m = tok.match(/^(?:group|grupo)[:=]?([1-6]{3,4})$/))) out.startString = parseInt(m[1][0], 10);
+    else if ((m = tok.match(/^(?:group|grupo|jogo)[:=]?([1-6]{3,4})$/))) out.startString = parseInt(m[1][0], 10);
     else if (/^(drop-?2|d2)$/.test(tok)) out.mode = "drop2";
     else if (/^(stack(ed)?)$/.test(tok)) out.mode = "stacked";
     else if (/^triad$/.test(tok)) out.mode = "triad";
@@ -215,6 +218,24 @@ export function parseSpec(spec: string): DiagramOptions {
 
 export function diagramFromSpec(spec: string, extra: Partial<DiagramOptions> = {}): DiagramResult {
   return makeDiagram({ ...parseSpec(spec), ...extra });
+}
+
+/** One full command — positionals (the pedido) + option flags — to a diagram.
+ *  This is the CLI's single-diagram semantics, shared verbatim by the site. */
+export function diagramFromArgs(args: ParsedArgs): DiagramResult {
+  const base = optionsFromFlags(args.flags);
+  if (args.flags.frets) {
+    if (args.positionals[0]) base.chord = args.positionals[0]; // optional chord for labels/title
+    return makeDiagram(base);
+  }
+  const spec = args.positionals.join(" ").trim();
+  if (!spec) throw new Error("Pedido vazio.");
+  return makeDiagram({ ...parseSpec(spec), ...base });
+}
+
+/** "C7M pf jogo5432 --label note --scale 1.2"  ->  diagram. */
+export function diagramFromCommand(line: string): DiagramResult {
+  return diagramFromArgs(parseArgs(tokenize(line)));
 }
 
 /** A filesystem-friendly slug for a spec / chord. */
