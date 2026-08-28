@@ -25,7 +25,7 @@ Only the chord is required; fields can appear in any order.
 | inversion  | `pf` `1a` `2a` `3a` · `root` `1st` `2nd` `3rd` · `inv0..inv5` | which chord tone is in the bass |
 | string     | `str5` · `row2` · `group5432`/`grupo5432`/`jogo5432` | where the **bass** note sits |
 | mode       | `drop2` (default for 4 notes) · `drop3` (bass on 6/5, one string skipped) · `stacked` · `triad` | how tones are distributed |
-| minfret    | `min7` | push the grip up to/above that fret |
+| minfret    | `min7` (any fret: `min5`, `min12`…) | push the grip up to/above that fret. A given grip repeats every 12 frets, so you get its first occurrence at/above the request; asking beyond the last occurrence returns the highest existing position |
 | open       | `soltas`/`open` (or `--open`) | allow open strings (default: fully fretted) |
 | labels     | `labels:degree` (default) · `labels:note` · `labels:none` | text inside the dots |
 | style      | `method` (default) | render style — only `method` is active (pt-BR) |
@@ -37,6 +37,8 @@ Only the chord is required; fields can appear in any order.
 | `row1` | `group6543` | 6th | `str6` |
 | `row2` | `group5432` | 5th | `str5` |
 | `row3` | `group4321` | 4th | `str4` |
+
+For **drop3** the set skips a string: `jogo6432` (bass on 6) · `jogo5321` (bass on 5).
 
 **Inversion → bass note:** `pf`/`root`→1, `1a`/`1st`→3rd, `2a`/`2nd`→5th, `3a`/`3rd`→7th.
 
@@ -53,7 +55,9 @@ Parsed compositionally — combine blocks freely; notes are computed from theory
 - **Extensions** (imply the 7th + lower odd extensions): `9 11 13`, `maj9 maj13`, `m9 m11 m13`, `6/9 m6/9`.
 - **Alterations** (any order): `b5 #5 b9 #9 #11 b13`; `alt`/`7alt` = fully altered dominant.
 - **add/omit**: `add9 add11 add13 add2 add4 add6`, `no3 no5 omit3 omit5`. Parens ignored: `Cm(maj7)`.
-- **Slash bass** `/note`: chord-tone bass → that inversion (`C/E`, `Cmaj7/B`); non-chord bass → added as lowest note (`Dm7/G`).
+- **Slash bass** `/note`: chord-tone bass → that inversion (`C/E`, `Cmaj7/B`); non-chord bass → added as lowest note (`Dm7/G`). A slash followed by DIGITS is an extension, not a bass: `C7/9` = C9, `C4/7` = 7sus4.
+- **Brazilian songbook spellings** (all normalized automatically): commas/dots inside the quality — `C7(9,13)`, `C7(b9,b13)`; bare `4` = sus4 (`C4`, `C4(7)`); bare `2` = add9 (`C2`); postfix accidentals — `C7/5-` = 7(b5), `C7/9+` = 7(#9); `b10` = `#9`; `#4` = `#11`; `mi`/`ma` prefixes (`Cmi7`, `Cma9`); trailing `7m` = 7M (`C7m`); lone `M` = major (`CM`); symbols `Δ`/`∆`/`^` = maj7, `ø`/`∅` = m7b5, `°`/`º` = dim.
+- **Parens-only tensions are adds (no 7th)**: `C(9)` = add9, `C(9,13)` = 1 3 5 9 13 — distinct from `C9`/`C13`, which are dominants.
 
 Conventions: an extension implies the stack below it; natural 11 is dropped from
 major-3rd chords unless you write the 11 chord or `#11`; altered dominant drops

@@ -71,6 +71,9 @@ The spec is `"<chord> [inversion] [string] [mode] [minfret] [labels]"` plus any
 option flags. The most common fields:
 
 - **chord** — one token, no spaces: `C7M` `Cm7(b5)` `C13#11` `Bb7alt` `C/G`.
+  Traditional Brazilian songbook spellings are understood too — `C7(9,13)`,
+  `C7/9`, `C4/7`, `C2`, `C7/5-`, `C7(b10)`, `Cmi7`, `C∆`, `Cø` — and `C(9)`
+  (tension-only parens) means add9 with NO 7th, unlike `C9`.
 - **inversion** — `pf` `1a` `2a` `3a` (bass = root / 3rd / 5th / 7th).
 - **string** — `jogo5432`/`grupo5432`/`group5432` (bass on string 5), or
   `row1`/`row2`/`row3` (bass on string 6/5/4), or `str6/str5/str4`. A Drop-2
