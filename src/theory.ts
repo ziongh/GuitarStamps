@@ -213,7 +213,7 @@ export interface ParsedChord {
   bassDegree?: string; // that bass as a degree of the root, e.g. "5" for C/G
 }
 
-function buildTones(root: Note, tokens: string[], order: "compound" | "simple" = "compound"): ChordTone[] {
+export function buildTones(root: Note, tokens: string[], order: "compound" | "simple" = "compound"): ChordTone[] {
   // "compound" keeps 9/11/13 in their upper octave (a tall arpeggio — used by
   // the stacked mode). "simple" folds them into one octave so an extension
   // sits in the register of the chord tone it replaces (13 by the 5, etc.) —

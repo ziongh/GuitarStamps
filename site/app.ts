@@ -208,28 +208,42 @@ baixo — são as quatro posições que o livro encadeia nas Formas 1 a 4.`,
   },
   {
     titulo: "O jogo de cordas: em que região do braço",
-    corpo: `A terceira palavra escolhe as quatro cordas do Drop-2 — ou seja,
-a região do instrumento: <code>jogo6543</code> é a região <b>grave</b> (baixo
-na 6ª corda), <code>jogo5432</code> a <b>média</b> (baixo na 5ª) e
+    corpo: `A terceira palavra escolhe as cordas — ou seja, a região do
+instrumento: <code>jogo6543</code> é a região <b>grave</b> (baixo na 6ª
+corda), <code>jogo5432</code> a <b>média</b> (baixo na 5ª) e
 <code>jogo4321</code> a <b>aguda</b> (baixo na 4ª). Também servem
 <code>grupo5432</code>, <code>row2</code> (fileira 2 = mesmo jogo) e
 <code>str5</code> (a corda do baixo, diretamente).
 <br><br>
 <b>Repare:</b> o Drop-2 precisa de 4 cordas vizinhas, então o baixo só pode
 estar na 6ª, 5ª ou 4ª corda. Quer um acorde só nas cordas mais agudas, ou
-começando da 3ª corda? Use o modo empilhado (seção "Os três modos").
-Clique nos três exemplos e veja o mesmo acorde caminhar do grave ao agudo.`,
+começando da 3ª corda? Use o modo empilhado (seção "Os modos de montar o
+acorde").
+<br><br>
+<b>E um jogo com salto de corda já diz qual é o voicing</b>, sem precisar
+escrever o modo: <code>jogo6432</code>/<code>jogo5321</code> pedem drop3,
+<code>jogo6421</code> pede drop24, e <code>jogo643</code>/<code>jogo532
+</code>/<code>jogo421</code> pedem a tríade aberta. O jogo vale ao pé da
+letra — as cordas do desenho são exatamente as que você escreveu.
+Clique nos exemplos e veja o mesmo acorde caminhar do grave ao agudo.`,
     exemplos: [
       "C7M pf jogo6543",
       "C7M pf jogo5432",
       "C7M pf jogo4321",
+      "C7M pf jogo6432",
+      "C7 pf jogo6421",
+      "C pf jogo643",
     ],
   },
   {
-    titulo: "min: subir a pegada pelo braço",
+    titulo: "min, max e span: a região do braço e a mão",
     corpo: `Todo desenho sai, por padrão, na posição mais grave possível.
 Acrescente <code>min</code> + o número de qualquer casa — <code>min5</code>,
 <code>min8</code>, <code>min12</code>… — para pedir "desta casa para cima".
+<code>max</code> é o contrário, o teto: <code>max10</code> mantém os dedos até
+a casa 10. Juntos, delimitam uma região (<code>min5 max10</code>). O
+<code>min</code> e o <code>max</code> valem para os <b>dedos</b>: cordas
+soltas (seção "Cordas soltas") ficam de fora da conta.
 <br><br>
 <b>Um detalhe de braço:</b> a mesma pegada só se repete 12 casas acima. Então
 o gerador entrega a primeira ocorrência <i>da pegada pedida</i> na casa que
@@ -237,11 +251,16 @@ você indicou ou acima dela — C7M pf no jogo 5432 mora na casa 3 e de novo na
 15; <code>min8</code> te leva direto à 15. Quer uma posição <i>entre</i> as
 duas? É outra inversão que mora lá: no mesmo jogo, as posições de C7M são
 pf na casa 3, 1ª na 5, 2ª na 9 e 3ª na 12. (E se pedir uma casa além da
-última possível, o gerador devolve a mais alta que existe.)`,
+última possível — ou um <code>min</code>+<code>max</code> impossíveis —, o
+gerador devolve a pegada mais próxima que existe.)
+<br><br>
+Por fim, <code>span</code> é a <b>abertura máxima da mão</b>, em trastes
+(padrão 6): <code>span4</code> para preferir pegadas mais compactas.`,
     exemplos: [
       "C7M pf jogo5432",
       "C7M pf jogo5432 min8",
       "C7M 2a jogo5432 min5",
+      "C7M pf jogo5432 min12 max20",
       "C7M 1a jogo5432, C7M 2a jogo5432, C7M 3a jogo5432",
     ],
   },
@@ -263,19 +282,64 @@ de cima vêm nas cordas seguintes — os conjuntos <code>jogo6432</code> e
 <code>jogo5321</code>. Sonoridade mais aberta que o Drop-2, muito usada em
 comping de jazz.
 <br><br>
-<b><code>triad</code></b> desenha tríades — três notas em três cordas. Se a
-cifra já é uma tríade (<code>C</code>, <code>Em</code>…), esse modo entra
-sozinho.`,
+<b><code>drop24</code></b> (Drop 2&4) é a terceira família clássica: <b>duas
+cordas puladas</b> — baixo na 6ª, vozes de cima na 4-2-1, o conjunto
+<code>jogo6421</code>. Sonoridade bem aberta, quase pianística.
+<br><br>
+<b><code>aberta</code></b> desenha a <b>tríade aberta</b> (spread): a voz do
+meio sobe uma oitava — o som aberto que todo método de tríades ensina. Jogos
+com um salto depois do baixo: <code>jogo643</code>, <code>jogo532</code>,
+<code>jogo421</code> (um jogo explícito pode escolher outro espaçamento,
+ex.: <code>jogo642</code>).
+<br><br>
+<b><code>triad</code></b> desenha tríades <i>fechadas</i> — três notas em três
+cordas vizinhas. Se a cifra já é uma tríade (<code>C</code>, <code>Em</code>…),
+esse modo entra sozinho.
+<br><br>
+<b>Atalho:</b> um jogo com salto já diz o modo — <code>jogo6432</code>/<code>
+jogo5321</code> pedem drop3, <code>jogo6421</code> pede drop24 e
+<code>jogo643</code>/<code>jogo532</code>/<code>jogo421</code> pedem aberta,
+sem precisar escrever a palavra.`,
     exemplos: [
       "C7M pf jogo6432 drop3",
       "G7 pf jogo6432 drop3",
       "C7M 1a jogo5321 drop3",
+      "C7 pf jogo6421",
+      "C7M 1a jogo6421",
+      "C pf jogo643 aberta",
+      "D pf jogo532",
+      "Em 2a jogo421",
       "Dmaj13 3a row1 stacked",
       "Cmaj9 pf str5 stacked",
       "Dm11 pf str6 stacked",
       "C pf jogo5432 triad",
       "Em pf jogo4321 triad",
       "C5 pf str6",
+    ],
+  },
+  {
+    titulo: "vozes: você escolhe os graus",
+    corpo: `Por padrão, quem decide quais graus entram no desenho é o
+dicionário de acordes (num <code>C9</code>, por exemplo, a quinta fica de
+fora do Drop-2). Com <code>vozes:</code> quem decide é <b>você</b>: liste os
+graus, separados por vírgula ou ponto (<code>vozes:3,5,b7,9</code> =
+<code>vozes:3.5.b7.9</code>).
+<br><br>
+Serve para o voicing <b>sem fundamental</b> (<code>vozes:3,5,b7,9</code> — o
+título ganha PF*, como nos acordes com ♭9), para o <b>shell de jazz</b>
+(<code>vozes:1,3,b7</code> em três cordas) e para qualquer redução que o seu
+arranjo pedir. Três graus combinam com <code>aberta</code>/<code>triad</code>;
+quatro, com <code>drop2</code>/<code>drop3</code>/<code>drop24</code>;
+qualquer quantidade, com <code>stacked</code>.
+<br><br>
+E dois ajustes finos da busca: <code>max</code> é o teto da mão no braço (com
+<code>min</code>, delimita uma região) e <code>span</code> é a abertura máxima
+da mão em trastes (padrão 6 — <code>span4</code> para mãos menores).`,
+    exemplos: [
+      "C7 pf jogo5432 vozes:3.5.b7.9",
+      "C7 pf jogo643 vozes:1.3.b7",
+      "C7M pf jogo5432 vozes:1.3.7",
+      "C7M pf jogo5432 min5 max10",
     ],
   },
   {
@@ -289,17 +353,47 @@ pegada mais grave. No desenho, a corda solta aparece como bolinha
 <b>vazada</b> acima da pestana; as pisadas continuam cheias.
 <br><br>
 Compare o E7: com <code>soltas</code> sai o clássico da primeira posição;
-sem, a mesma harmonia totalmente pisada, na casa 12. Combinar com
-<code>min</code>? Pode — e o <code>min</code> manda: a corda solta é a casa 0,
-então <code>E7 pf jogo6543 min7 soltas</code> sai pisado, na primeira posição
-a partir da casa 7. (Pegadas folclóricas
-que reorganizam as vozes — o Dó aberto, por exemplo — não são Drop-2: para
-essas, dite os trastes com <code>--frets</code>, na seção seguinte.)`,
+sem, a mesma harmonia totalmente pisada, na casa 12. E combinar com
+<code>min</code>? Pode — o <code>min</code> vale só para os <b>dedos</b>: a
+corda solta não conta como posição da mão. <code>E7 pf jogo6543 min7
+soltas</code> dá o baixo Mi solto soando grave com a mão lá em cima
+(<code>0 14 12 13</code>, a primeira ocorrência na casa 7 ou acima); a janela
+do desenho acompanha os dedos, com a solta vazada por cima. (Pegadas
+folclóricas que reorganizam as vozes — o Dó aberto, por exemplo — não são
+Drop-2: para essas, dite os trastes com <code>--frets</code>, na seção
+seguinte.)`,
     exemplos: [
       "E7 pf jogo6543 soltas",
       "A7 pf jogo5432 soltas",
       "D7 pf jogo4321 soltas",
       "E7 pf jogo6543",
+      "E7 pf jogo6543 min7 soltas",
+      "D7 pf jogo4321 min3 soltas",
+    ],
+  },
+  {
+    titulo: "Tudo combina",
+    corpo: `As palavras da receita não são gavetas separadas — <b>elas
+compõem</b>. Cada modo tem seu número de vozes (3 na <code>aberta</code> e na
+<code>triad</code>, 4 nos drops, qualquer um no <code>stacked</code>) e seus
+jogos; todo o resto — <code>min</code>, <code>max</code>, <code>span</code>,
+<code>vozes:</code>, <code>soltas</code>, <code>--janela</code> — funciona
+com qualquer modo.
+<br><br>
+Alguns pratos completos: solta grave com a mão aguda
+(<code>min7 soltas</code>); a região do braço delimitada
+(<code>min12 max20</code>); o shell de jazz (<code>vozes:1.3.b7</code> em
+jogo de 3 cordas com salto); a tríade aberta com corda solta
+(<code>aberta soltas</code>); e o dominante sem fundamental subido pelo
+braço (<code>vozes:3.5.b7.9 min7</code>). Se um pedido for impossível ao pé
+da letra, o gerador entrega a pegada mais próxima que existe — nunca um
+braço vazio.`,
+    exemplos: [
+      "E7 pf jogo6543 min7 soltas",
+      "C7M pf jogo5432 min12 max20",
+      "C7 pf jogo643 vozes:1.3.b7",
+      "C pf jogo532 aberta soltas",
+      "C7 pf jogo5432 vozes:3.5.b7.9 min7",
     ],
   },
   {
@@ -372,16 +466,23 @@ ou quando a informação seria repetida na legenda do livro.`,
     ],
   },
   {
-    titulo: "--inv, --start, --mode, --min: variar sem reescrever",
+    titulo: "--inv, --start, --mode…: variar sem reescrever",
     corpo: `Tudo o que as palavras da receita dizem também pode ser dito por
 opção: <code>--inv 2</code> (inversão), <code>--start 6</code> (corda do
-baixo), <code>--mode stacked</code> e <code>--min 8</code>. O resultado é o
-mesmo — a graça é a comodidade: repita a receita e mude só um número para
-comparar variações rapidamente.`,
+baixo), <code>--mode stacked</code>, <code>--min 8</code>, <code>--max
+12</code>, <code>--span 4</code>, <code>--vozes "1,3,b7"</code> e
+<code>--open</code> (= <code>soltas</code>). O resultado é o mesmo — a graça
+é a comodidade: repita a receita e mude só um número para comparar variações
+rapidamente.
+<br><br>
+Uma opção que só existe como <code>--</code>: <code>--janela 5</code> fixa o
+número mínimo de casas desenhadas — dê o mesmo valor a uma fileira de
+carimbos e todos saem com a janela da mesma altura, alinhados na página.`,
     exemplos: [
       "C7M jogo5432 --inv 0, C7M jogo5432 --inv 1, C7M jogo5432 --inv 2, C7M jogo5432 --inv 3",
       "C7M pf jogo5432 --start 6",
       "C7M pf jogo5432 --min 8",
+      "C7M pf jogo5432 --janela 5",
     ],
   },
   {

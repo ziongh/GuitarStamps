@@ -68,9 +68,12 @@ function baseFret(pc: number, openMidi: number): number {
 /**
  * Lay an ordered (low->high) list of tones on the given strings, with the bass
  * shifted up by `bassOctave` octaves. Each upper voice takes the lowest fret
- * that keeps the voicing strictly ascending.
+ * that keeps the voicing strictly ascending. `liftAt` (voice index >= 1) raises
+ * that voice — and, by the ascending rule, every voice above it — one octave:
+ * that is what separates an open bass from a hand parked high on the neck
+ * (E7 "0 14 12 13" instead of the first-position "0 2 0 1").
  */
-function place(order: ChordTone[], strings: number[], tuning: Tuning, bassOctave: number): FretPos[] {
+function place(order: ChordTone[], strings: number[], tuning: Tuning, bassOctave: number, liftAt = 0): FretPos[] {
   const out: FretPos[] = [];
   let prevMidi = -Infinity;
   order.forEach((tone, i) => {
@@ -78,6 +81,7 @@ function place(order: ChordTone[], strings: number[], tuning: Tuning, bassOctave
     let fret = baseFret(tone.pc, open) + (i === 0 ? 12 * bassOctave : 0);
     let midi = open + fret;
     if (i > 0) while (midi <= prevMidi) { fret += 12; midi += 12; }
+    if (i > 0 && i === liftAt) { fret += 12; midi += 12; }
     out.push({ string: strings[i], fret, pc: tone.pc, note: tone.note, degree: tone.degree, midi, isBass: i === 0 });
     prevMidi = midi;
   });
@@ -90,33 +94,79 @@ function place(order: ChordTone[], strings: number[], tuning: Tuning, bassOctave
  * the neck), so we try a few octaves and prefer a compact grip in the lowest
  * position that is at/above `minFret`.
  */
+/** Search knobs shared by every theory-driven voicing mode. `strings` pins the
+ *  exact string set (low->high bass first, e.g. [6,4,3]) instead of the mode's
+ *  default set derived from the start string. */
+export interface VoicingExtra {
+  maxSpan?: number; // widest hand stretch, in frets (default 6)
+  maxFret?: number; // fret ceiling for the fretted notes
+  strings?: number[];
+}
+
 interface PlaceOpts {
   maxSpan?: number;
+  maxFret?: number;
   preferNoOpen?: boolean; // avoid open strings (method-book voicings are fully fretted)
+}
+/** `low`/`high`/`span` describe the HAND (fretted notes only): an open string
+ *  costs no finger, so it neither anchors the position nor widens the stretch. */
+interface Candidate { v: FretPos[]; low: number; high: number; span: number; open: boolean }
+function toCandidate(v: FretPos[]): Candidate {
+  const fretted = v.filter((p) => p.fret > 0).map((p) => p.fret);
+  const low = fretted.length ? Math.min(...fretted) : 0;
+  const high = fretted.length ? Math.max(...fretted) : 0;
+  return { v, low, high, span: high - low, open: v.some((p) => p.fret === 0) };
 }
 function placeAscending(order: ChordTone[], strings: number[], tuning: Tuning, minFret: number, opts: PlaceOpts = {}): FretPos[] {
   const maxSpan = opts.maxSpan ?? 6;
-  const candidates: { v: FretPos[]; low: number; span: number; open: boolean }[] = [];
+  const candidates: Candidate[] = [];
+  const seen = new Set<string>();
+  const push = (v: FretPos[]) => {
+    const key = v.map((p) => p.fret).join(",");
+    if (!seen.has(key)) { seen.add(key); candidates.push(toCandidate(v)); }
+  };
   for (let oct = 0; oct <= 5; oct++) {
     const v = place(order, strings, tuning, oct);
-    const frets = v.map((p) => p.fret);
-    const low = Math.min(...frets);
-    if (low > 18) break;
-    candidates.push({ v, low, span: Math.max(...frets) - low, open: frets.includes(0) });
+    const c = toCandidate(v);
+    if (c.low > 18) break;
+    push(v);
+    // Open strings + a high hand position: with opens allowed, also try lifting
+    // the grip an octave ABOVE each voice, keeping the voices below it where
+    // they are. Only lifts that actually ride on an open string earn a spot —
+    // a fully fretted lift is just a stretched copy of another octave.
+    if (!opts.preferNoOpen) {
+      for (let li = 1; li < order.length; li++) {
+        const lv = place(order, strings, tuning, oct, li);
+        if (!lv.some((p) => p.fret === 0)) continue;
+        const lc = toCandidate(lv);
+        if (lc.low > 18 || Math.max(...lv.map((p) => p.fret)) > 22) continue;
+        push(lv);
+      }
+    }
   }
-  let pool = candidates.filter((c) => c.low >= minFret);
+  // maxFret is a ceiling on the fretted notes; if it rules out every grip it is
+  // relaxed (like minFret's fallback below, the closest playable grip wins)
+  let ceiling = candidates;
+  if (opts.maxFret !== undefined) {
+    const capped = candidates.filter((c) => c.high <= opts.maxFret!);
+    if (capped.length) ceiling = capped;
+  }
+  let pool = ceiling.filter((c) => c.low >= minFret);
   // If minFret asks beyond the last reachable occurrence of this grip, give
   // the HIGHEST available position (closest below the request) instead of
   // silently wrapping to the lowest one.
   const fellBack = pool.length === 0;
-  if (fellBack) pool = candidates;
-  // prefer (if asked) fully-fretted grips, then grips within maxSpan, then the
-  // lowest position at/above minFret
+  if (fellBack) pool = ceiling;
+  // prefer (if asked) fully-fretted grips, then grips within maxSpan, then —
+  // with opens allowed — grips that ride an open string (it deepens the chord
+  // at no cost to the hand), then the lowest position at/above minFret
   pool.sort((a, b) => {
     if (opts.preferNoOpen && a.open !== b.open) return a.open ? 1 : -1;
     const as = a.span <= maxSpan ? 0 : 1;
     const bs = b.span <= maxSpan ? 0 : 1;
-    return as !== bs ? as - bs : fellBack ? b.low - a.low : a.low - b.low;
+    if (as !== bs) return as - bs;
+    if (!opts.preferNoOpen && a.open !== b.open) return a.open ? -1 : 1;
+    return fellBack ? b.low - a.low : a.low - b.low;
   });
   return pool[0].v;
 }
@@ -124,6 +174,15 @@ function placeAscending(order: ChordTone[], strings: number[], tuning: Tuning, m
 const INVERSION_NAMES = ["root position", "1st inversion", "2nd inversion", "3rd inversion", "4th inversion", "5th inversion"];
 export function inversionName(i: number): string {
   return INVERSION_NAMES[i] ?? `inversion ${i}`;
+}
+
+/** Validate an explicit string set (e.g. from "jogo6432") against the set a
+ *  mode derives from its start string; a mismatch is a user error, not a hint
+ *  to silently voice something else. */
+function checkStrings(mode: string, given: number[] | undefined, want: number[], hint: string): number[] {
+  if (!given) return want;
+  if (given.length === want.length && given.every((s, i) => s === want[i])) return want;
+  throw new Error(`O ${mode} usa as cordas ${want.join("-")} a partir desse baixo (recebi ${given.join("-")}). ${hint}`);
 }
 
 /**
@@ -141,6 +200,7 @@ export function drop2Voicing(
   tuning: Tuning,
   minFret = 0,
   preferNoOpen = false,
+  extra: VoicingExtra = {},
 ): VoicingResult {
   if (tones4.length !== 4) throw new Error(`O Drop-2 precisa de exatamente 4 notas; recebi ${tones4.length}.`);
   if (bassIndex < 0 || bassIndex > 3) throw new Error(`A inversão de um acorde de 4 notas deve ser 0..3; recebi ${bassIndex}.`);
@@ -154,8 +214,12 @@ export function drop2Voicing(
   //   [ t[b], t[b+2], t[b+3], t[b+1] ]   (indices mod 4)
   const b = bassIndex;
   const order = [tones4[b], tones4[(b + 2) % 4], tones4[(b + 3) % 4], tones4[(b + 1) % 4]];
-  const strings = [startString, startString - 1, startString - 2, startString - 3];
-  return { positions: placeAscending(order, strings, tuning, minFret, { preferNoOpen }), warnings: [] };
+  const strings = checkStrings(
+    "Drop-2", extra.strings,
+    [startString, startString - 1, startString - 2, startString - 3],
+    `Para cordas com salto, use "drop3" (6-4-3-2 / 5-3-2-1) ou "drop24" (6-4-2-1).`,
+  );
+  return { positions: placeAscending(order, strings, tuning, minFret, { preferNoOpen, maxSpan: extra.maxSpan, maxFret: extra.maxFret }), warnings: [] };
 }
 
 /**
@@ -171,6 +235,7 @@ export function drop3Voicing(
   tuning: Tuning,
   minFret = 0,
   preferNoOpen = false,
+  extra: VoicingExtra = {},
 ): VoicingResult {
   if (tones4.length !== 4) throw new Error(`O Drop-3 precisa de exatamente 4 notas; recebi ${tones4.length}.`);
   if (bassIndex < 0 || bassIndex > 3) throw new Error(`A inversão de um acorde de 4 notas deve ser 0..3; recebi ${bassIndex}.`);
@@ -184,8 +249,85 @@ export function drop3Voicing(
   // an octave puts the requested tone in the bass:
   const b = bassIndex;
   const order = [tones4[b], tones4[(b + 3) % 4], tones4[(b + 1) % 4], tones4[(b + 2) % 4]];
-  const strings = [startString, startString - 2, startString - 3, startString - 4];
-  return { positions: placeAscending(order, strings, tuning, minFret, { preferNoOpen }), warnings: [] };
+  const strings = checkStrings(
+    "Drop-3", extra.strings,
+    [startString, startString - 2, startString - 3, startString - 4],
+    `Para 4 cordas adjacentes, use "drop2"; para 6-4-2-1, use "drop24".`,
+  );
+  return { positions: placeAscending(order, strings, tuning, minFret, { preferNoOpen, maxSpan: extra.maxSpan, maxFret: extra.maxFret }), warnings: [] };
+}
+
+/**
+ * Drop-2&4 voicing: the third classic family — drop the 2nd AND 4th voices of
+ * the close voicing an octave. Two string skips: bass on 6, upper voices on
+ * 4-2-1 ("jogo6421"). Classic C7 root position: 8 x 5 x 5 6.
+ */
+export function drop24Voicing(
+  tones4: ChordTone[],
+  bassIndex: number,
+  startString: number,
+  tuning: Tuning,
+  minFret = 0,
+  preferNoOpen = false,
+  extra: VoicingExtra = {},
+): VoicingResult {
+  if (tones4.length !== 4) throw new Error(`O Drop-2&4 precisa de exatamente 4 notas; recebi ${tones4.length}.`);
+  if (bassIndex < 0 || bassIndex > 3) throw new Error(`A inversão de um acorde de 4 notas deve ser 0..3; recebi ${bassIndex}.`);
+  if (startString !== 6) {
+    throw new Error(
+      `O Drop-2&4 pula uma corda depois do baixo E outra depois da segunda voz, ` +
+        `então só cabe com o baixo na 6ª corda (cordas 6-4-2-1, "jogo6421"); recebi a ${startString}ª.`,
+    );
+  }
+  // Drop-2&4 voice order for bass index b (low->high):
+  //   [ t[b], t[b+2], t[b+1], t[b+3] ]   (indices mod 4)
+  const b = bassIndex;
+  const order = [tones4[b], tones4[(b + 2) % 4], tones4[(b + 1) % 4], tones4[(b + 3) % 4]];
+  const strings = checkStrings("Drop-2&4", extra.strings, [6, 4, 2, 1], `Para outros jogos, use "drop2" ou "drop3".`);
+  return { positions: placeAscending(order, strings, tuning, minFret, { preferNoOpen, maxSpan: extra.maxSpan, maxFret: extra.maxFret }), warnings: [] };
+}
+
+/**
+ * Spread ("open") triad: the middle voice of the close triad raised an octave
+ * — the Drop-2 of a triad. Default string sets skip one string after the bass:
+ * 6-4-3, 5-3-2, 4-2-1; an explicit "jogo" may pick other spacings (6-4-2,
+ * 5-3-1…). With 3 custom tones (--vozes "1,3,b7") this also draws shells:
+ * C7 --vozes 1,3,b7 aberta jogo643 -> 8 x 8 9 x x.
+ */
+export function spreadVoicing(
+  tones3: ChordTone[],
+  bassIndex: number,
+  startString: number,
+  tuning: Tuning,
+  minFret = 0,
+  preferNoOpen = false,
+  extra: VoicingExtra = {},
+): VoicingResult {
+  if (tones3.length !== 3) {
+    throw new Error(
+      `A tríade aberta precisa de exatamente 3 notas; recebi ${tones3.length}. ` +
+        `Para um acorde de 4+ notas, escolha 3 graus com --vozes (ex.: --vozes "1,3,b7").`,
+    );
+  }
+  if (bassIndex < 0 || bassIndex > 2) throw new Error(`A inversão de uma tríade deve ser 0..2; recebi ${bassIndex}.`);
+  let strings = extra.strings;
+  if (strings) {
+    if (strings.length !== 3 || !strings.every((s, i) => s >= 1 && s <= 6 && (i === 0 || s < strings![i - 1]))) {
+      throw new Error(`A tríade aberta precisa de 3 cordas em ordem descendente (ex.: "jogo643"); recebi ${strings.join("-")}.`);
+    }
+  } else {
+    if (startString < 4 || startString > 6) {
+      throw new Error(
+        `A tríade aberta pula uma corda depois do baixo, então a corda do baixo deve ser a 6ª, 5ª ou 4ª ` +
+          `(jogos 6-4-3, 5-3-2, 4-2-1); recebi a ${startString}ª.`,
+      );
+    }
+    strings = [startString, startString - 2, startString - 3];
+  }
+  // Spread order for bass index b (low->high): [ t[b], t[b+2], t[b+1] ] (mod 3)
+  const b = bassIndex;
+  const order = [tones3[b], tones3[(b + 2) % 3], tones3[(b + 1) % 3]];
+  return { positions: placeAscending(order, strings, tuning, minFret, { preferNoOpen, maxSpan: extra.maxSpan, maxFret: extra.maxFret }), warnings: [] };
 }
 
 /**
@@ -200,15 +342,21 @@ export function stackedVoicing(
   tuning: Tuning,
   minFret = 0,
   preferNoOpen = false,
+  extra: VoicingExtra = {},
 ): VoicingResult {
   const n = tones.length;
   if (bassIndex < 0 || bassIndex >= n) throw new Error(`A inversão deve ser 0..${n - 1} para este acorde; recebi ${bassIndex}.`);
-  const available = startString; // strings startString, startString-1, ... down to 1
-  const count = Math.min(n, available);
+  // An explicit "jogo" pins the exact strings (any descending set); otherwise
+  // the tones fill consecutive strings upward from the start string.
+  const avail = extra.strings ?? Array.from({ length: startString }, (_, i) => startString - i);
+  if (extra.strings && !avail.every((s, i) => s >= 1 && s <= 6 && (i === 0 || s < avail[i - 1]))) {
+    throw new Error(`O jogo de cordas precisa vir em ordem descendente (do grave ao agudo); recebi ${avail.join("-")}.`);
+  }
+  const count = Math.min(n, avail.length);
   const warnings: string[] = [];
   if (count < n) {
     warnings.push(
-      `acorde de ${n} notas, mas só há ${available} corda(s) a partir da ${startString}ª; ` +
+      `acorde de ${n} notas, mas só há ${avail.length} corda(s) ${extra.strings ? "no jogo pedido" : `a partir da ${startString}ª`}; ` +
         `foram tocadas as ${count} notas mais graves. Comece numa corda mais grave (5ª/6ª) para caberem todas.`,
     );
   }
@@ -216,9 +364,9 @@ export function stackedVoicing(
   const strings: number[] = [];
   for (let i = 0; i < count; i++) {
     order.push(tones[(bassIndex + i) % n]);
-    strings.push(startString - i);
+    strings.push(avail[i]);
   }
-  return { positions: placeAscending(order, strings, tuning, minFret, { preferNoOpen }), warnings };
+  return { positions: placeAscending(order, strings, tuning, minFret, { preferNoOpen, maxSpan: extra.maxSpan, maxFret: extra.maxFret }), warnings };
 }
 
 /**

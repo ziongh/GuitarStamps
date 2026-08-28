@@ -232,3 +232,101 @@ test("open notes are rendered as outlined markers above the nut", () => {
   const { svg } = diag("A7 pf jogo5432 soltas");
   expect(svg).toContain('stroke="#000000"'); // outlined open dot in ink
 });
+
+// ---- open strings + high position (soltas + min) -----------------------------
+test("soltas + min combines open strings with a high hand position", () => {
+  expect(tab(diag("E7 pf jogo6543 min7 soltas").positions)).toBe("0 14 12 13 x x");
+  expect(tab(diag("D7 pf jogo4321 min3 soltas").positions)).toBe("x x 0 14 13 14");
+});
+
+test("min constrains the FRETTED notes only: a low open grip whose hand already clears it survives", () => {
+  expect(tab(diag("E7 pf jogo6543 min1 soltas").positions)).toBe("0 2 0 1 x x");
+  expect(tab(diag("A7 pf jogo5432 min2 soltas").positions)).toBe("x 0 2 0 2 x");
+});
+
+test("soltas + min falls back to fully fretted when no open string fits the position", () => {
+  // an ascending Em triad from string 4 at min5 can't keep G/B open (the E
+  // would have to sit above them) — the engine must still deliver the grip
+  expect(tab(diag("Em pf jogo4321 soltas min5").positions)).toBe("x x 14 12 12 x");
+});
+
+test("without soltas, min + fully fretted behavior is unchanged", () => {
+  expect(tab(diag("E7 pf jogo6543 min7").positions)).toBe("12 14 12 13 x x");
+});
+
+// ---- tríades abertas (spread triads) -----------------------------------------
+test("aberta gives the classic spread-triad shapes", () => {
+  expect(tab(diag("C pf jogo643 aberta").positions)).toBe("8 x 5 9 x x");
+  expect(tab(diag("C 1a jogo532 aberta").positions)).toBe("x 7 x 5 8 x");
+  expect(tab(diag("Em 2a jogo421 aberta").positions)).toBe("x x 9 x 8 12");
+});
+
+test("aberta on a 4-note chord asks for --vozes instead of guessing", () => {
+  expect(() => diag("C7M pf jogo643 aberta")).toThrow(/vozes/);
+});
+
+// ---- drop 2&4 ----------------------------------------------------------------
+test("drop24 gives the textbook two-skip shapes on 6-4-2-1", () => {
+  expect(tab(diag("C7 pf jogo6421 drop24").positions)).toBe("8 x 5 x 5 6");
+  expect(tab(diag("C7M pf drop24").positions)).toBe("8 x 5 x 5 7"); // bass defaults to string 6
+});
+
+test("drop24 rejects a bass string other than 6", () => {
+  expect(() => diag("C7 pf str5 drop24")).toThrow(/Drop-2&4/);
+});
+
+// ---- jogo names its voicing family -------------------------------------------
+test("a skip-string jogo infers its mode: 6432/5321 drop3, 6421 drop24, 3-string skips aberta", () => {
+  expect(diag("C7M pf jogo6432").mode).toBe("drop3");
+  expect(tab(diag("C7M pf jogo6432").positions)).toBe("8 x 9 9 8 x"); // was a silent 6543 trap before
+  expect(diag("C7 pf jogo6421").mode).toBe("drop24");
+  expect(diag("D pf jogo532").mode).toBe("aberta");
+  expect(tab(diag("D pf jogo532").positions)).toBe("x 5 x 2 7 x");
+});
+
+test("a jogo written low-string-last is rejected", () => {
+  expect(() => diag("C7M pf jogo2345")).toThrow(/descendente/);
+});
+
+// ---- --vozes: hand-picked voiced degrees -------------------------------------
+test("vozes builds rootless voicings (and labels them PF*)", () => {
+  const r = diag("C7 pf jogo5432 vozes:3,5,b7,9");
+  expect(r.positions.some((p) => p.degree === "1")).toBe(false);
+  expect(new Set(r.positions.map((p) => p.degree))).toEqual(new Set(["3", "5", "b7", "9"]));
+  expect(r.svg).toContain("PF*");
+});
+
+test("vozes with 3 degrees + a skip jogo draws the classic shell", () => {
+  expect(tab(diag("C7 pf jogo643 vozes:1,3,b7").positions)).toBe("8 x 8 9 x x");
+});
+
+// ---- knobs: max / span / janela ----------------------------------------------
+test("max caps the hand; an impossible min+max falls back to the closest grip", () => {
+  expect(tab(diag("C7M pf str5 min12 max20").positions)).toBe("x 15 17 16 17 x");
+  expect(tab(diag("C7M pf str5 max10").positions)).toBe("x 3 5 4 5 x");
+  expect(tab(diag("C7M pf str5 min5 max10").positions)).toBe("x 3 5 4 5 x");
+});
+
+test("an unsatisfiable span degrades gracefully to the best grip", () => {
+  expect(tab(diag("G7 pf str6 span1").positions)).toBe("3 5 3 4 x x");
+});
+
+test("--janela fixes the window height so rows of carimbos align", () => {
+  const fretRows = (svg: string) => (svg.match(/text-anchor="end"/g) ?? []).length;
+  const r = makeDiagram({ ...parseSpec("C7M pf row2"), svg: { minWindow: 6 } });
+  expect(fretRows(r.svg)).toBe(6);
+});
+
+test("a high grip with open strings gets a compact window, not the whole neck", () => {
+  const fretRows = (svg: string) => (svg.match(/text-anchor="end"/g) ?? []).length;
+  // theory-driven: E7 open bass + hand at 12-14 -> 4 fret rows starting at 12
+  const hi = diag("E7 pf jogo6543 min7 soltas").svg;
+  expect(fretRows(hi)).toBe(4);
+  expect(hi).toContain(">12</text>");
+  // explicit frets: open low E + upper voices at fret 9 -> window at 9, not 1..9
+  const ex = makeDiagram({ frets: "0 x x 9 9 9", chord: "E7" }).svg;
+  expect(fretRows(ex)).toBe(4);
+  expect(ex).toContain(">9</text>");
+  // a first-position open grip still starts at fret 1 (nut window)
+  expect(diag("E7 pf jogo6543 soltas").svg).toContain(">1</text>");
+});

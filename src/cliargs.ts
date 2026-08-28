@@ -19,7 +19,8 @@ export interface ParsedArgs {
 /** Flags that consume a value (the token that follows them). */
 export const VALUE_FLAGS = new Set([
   "-o", "--out", "--batch", "--outdir", "--frets", "--inv", "--inversion",
-  "--start", "--string", "--mode", "--min", "--minfret", "--label", "--labels",
+  "--start", "--string", "--mode", "--min", "--minfret", "--max", "--maxfret",
+  "--span", "--vozes", "--tones", "--janela", "--window", "--label", "--labels",
   "--title", "--tuning", "--accent", "--ink", "--paper", "--scale", "--style",
 ]);
 
@@ -67,11 +68,18 @@ export function optionsFromFlags(flags: Record<string, string | boolean>): Parti
   const svg: NonNullable<DiagramOptions["svg"]> = {};
   if (flags.frets) o.frets = String(flags.frets);
   if (flags.inv ?? flags.inversion) o.inversion = parseInt(String(flags.inv ?? flags.inversion), 10);
-  if (flags.start ?? flags.string) o.startString = parseInt(String(flags.start ?? flags.string), 10);
+  if (flags.start ?? flags.string) {
+    o.startString = parseInt(String(flags.start ?? flags.string), 10);
+    o.strings = undefined; // the flag overrides a jogo pinned in the spec
+  }
   if (flags.mode) o.mode = String(flags.mode) as DiagramOptions["mode"];
   if (flags.style) o.style = String(flags.style) as DiagramOptions["style"];
   if (flags.plain) o.style = "plain";
   if (flags.min ?? flags.minfret) o.minFret = parseInt(String(flags.min ?? flags.minfret), 10);
+  if (flags.max ?? flags.maxfret) o.maxFret = parseInt(String(flags.max ?? flags.maxfret), 10);
+  if (flags.span) o.maxSpan = parseInt(String(flags.span), 10);
+  if (flags.vozes ?? flags.tones) o.voices = String(flags.vozes ?? flags.tones);
+  if (flags.janela ?? flags.window) svg.minWindow = parseInt(String(flags.janela ?? flags.window), 10);
   if (flags.label ?? flags.labels) o.labels = String(flags.label ?? flags.labels) as LabelMode;
   if (flags.title) o.title = String(flags.title);
   if (flags["no-subtitle"]) o.subtitle = null;

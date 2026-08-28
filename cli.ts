@@ -31,13 +31,20 @@ GRAMÁTICA DO PEDIDO
     inversão    pf | 1a | 2a | 3a   (também root|1st|2nd|3rd, inv0..inv5)
     corda       str5 | row2 | group5432 | jogo5432   (onde fica o BAIXO)
                 row1=jogo6543 (6ª corda), row2=jogo5432 (5ª), row3=jogo4321 (4ª)
-    modo        drop2 (padrão p/ 4 notas) | drop3 (baixo na 6ª/5ª, uma corda pulada:
-                jogo6432/jogo5321) | stacked (empilhado) | triad (tríade)
-    traste-mín  min7  (empurra a pegada para o 7º traste ou acima)
-    soltas      permite cordas soltas na pegada (padrão: tudo pisado, transponível)
+                um jogo com salto já diz o modo: jogo6432/jogo5321 -> drop3,
+                jogo6421 -> drop24, jogo643/jogo532/jogo421 -> aberta
+    modo        drop2 (padrão p/ 4 notas) | drop3 (baixo na 6ª/5ª, uma corda pulada)
+                | drop24 (6-4-2-1, dois saltos) | aberta (tríade aberta/spread)
+                | stacked (empilhado) | triad (tríade fechada)
+    traste-mín  min7  (empurra a MÃO para o 7º traste ou acima; cordas soltas não contam)
+    traste-máx  max10 (teto para a mão; impossível junto com o min? o max prevalece)
+    span        span4 (abertura máxima da mão em trastes; padrão 6)
+    vozes       vozes:3,5,b7,9 (escolhe os graus tocados: sem fundamental, shell 1,3,b7…)
+    soltas      permite cordas soltas na pegada (padrão: tudo pisado, transponível);
+                com min, combina solta grave + mão aguda: E7 min7 soltas -> 0 14 12 13
     rótulos     labels:degree (padrão) | labels:note | labels:none
     estilo      method (padrão; notação pt-BR + legenda de vozes)
-  ex.:  "C7M pf row2"     "C7M 1a row2"     "Bb7b9 pf group4321"     "Dmaj13 3a row1 stacked"
+  ex.:  "C7M pf row2"   "C pf jogo643 aberta"   "C7 pf jogo6421"   "C7 pf jogo643 vozes:1,3,b7"
 
 OPÇÕES
   -o, --out <arquivo>   arquivo de saída (modo avulso; padrão ./<nome>.svg)
@@ -49,9 +56,13 @@ OPÇÕES
       --frets "<6>"     trastes manuais, do grave ao agudo, ex.: "x x 9 9 9 9"
       --inv <n>         inversão (sobrescreve o pedido)
       --start <1-6>     corda do baixo (sobrescreve o pedido)
-      --mode <m>        auto | drop2 | drop3 | stacked | triad
+      --mode <m>        auto | drop2 | drop3 | drop24 | aberta | stacked | triad
       --style <s>       method (padrão)   (o estilo 'plain' está desativado por enquanto)
       --min <n>         traste mínimo (empurra a pegada neck acima)
+      --max <n>         traste máximo (teto para as notas pisadas)
+      --span <n>        abertura máxima da mão, em trastes (padrão 6)
+      --vozes "<graus>" graus tocados, ex.: "3,5,b7,9" (sem fundamental) ou "1,3,b7" (shell)
+      --janela <n>      nº mínimo de casas desenhadas (alinha uma fileira de carimbos)
       --label <m>       degree | note | none
       --title "<t>"     título personalizado
       --no-subtitle     esconde o subtítulo automático

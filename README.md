@@ -212,18 +212,24 @@ escrito numa pequena "linguagem". A ordem dos pedaços é flexível; separe-os p
 espaço:
 
 ```
-"<acorde> [inversão] [corda do baixo] [modo] [traste mínimo] [rótulos] [estilo]"
+"<acorde> [inversão] [jogo/corda] [modo] [min/max/span] [vozes:…] [soltas] [rótulos] [estilo]"
 ```
 
-Só o **acorde** é obrigatório. Os demais campos têm padrões sensatos.
+Só o **acorde** é obrigatório; a ordem das demais palavras não importa, e os
+campos têm padrões sensatos. **Todos combinam entre si** — veja a
+[tabela de combinações](#tudo-combina--a-tabela) na seção 8.
 
 | campo            | exemplos                                   | o que significa |
 |------------------|--------------------------------------------|-----------------|
 | **acorde**       | `C7M` · `Cm7b5` · `C13#11` · `Bb7alt` · `C/G` | a cifra, sem espaços (veja a [seção 7](#7-escrevendo-quase-qualquer-acorde)) |
 | **inversão**     | `pf` · `1a` · `2a` · `3a` | qual nota do acorde fica no baixo (`pf` = posição fundamental) |
 | **corda do baixo** | `str5` · `row2` · `group5432` | em que corda mora o **baixo** |
-| **modo**         | `drop2` (padrão) · `drop3` (baixo na 6ª/5ª, uma corda pulada) · `stacked` · `triad` | como as vozes são distribuídas (veja [seção 8](#8-como-a-ferramenta-monta-as-vozes)) |
-| **traste mínimo** | `min7` | empurra a pegada para cima, a partir do 7º traste |
+| **modo**         | `drop2` (padrão) · `drop3` (uma corda pulada) · `drop24` (6-4-2-1) · `aberta` (tríade aberta) · `stacked` · `triad` | como as vozes são distribuídas (veja [seção 8](#8-como-a-ferramenta-monta-as-vozes)) |
+| **traste mínimo** | `min7` | empurra a **mão** para cima, a partir do 7º traste (com `soltas`, as cordas soltas ficam de fora da conta) |
+| **traste máximo** | `max10` | teto para as notas pisadas (junto com `min`, delimita uma região do braço) |
+| **abertura**     | `span4` | abertura máxima da mão, em trastes (padrão 6) |
+| **vozes**        | `vozes:3,5,b7,9` | escolhe **quais graus** são tocados: sem fundamental, shell `1,3,b7`, o que você quiser (vírgula ou ponto como separador) |
+| **soltas**       | `soltas` (ou `open`) | permite cordas soltas na pegada (padrão: tudo pisado, transponível) |
 | **rótulos**      | `labels:degree` (padrão) · `labels:note` · `labels:none` | o que vai escrito dentro das bolinhas |
 | **estilo**       | `method` (padrão) | o visual do desenho — por ora só o pt-BR (veja [seção 10](#10-o-estilo-de-desenho-pt-br)) |
 
@@ -250,6 +256,12 @@ jeitos equivalentes — use o que for mais natural para você:
 Ou seja, `row2`, `group5432` e `str5` apontam todos para o mesmo conjunto (baixo
 na 5ª corda). Como o Drop-2 precisa de mais três cordas **acima** do baixo, as
 cordas de baixo válidas são a **6ª, 5ª ou 4ª**.
+
+**Um jogo com salto de corda já diz qual é o voicing** — se você não escrever o
+modo, ele é deduzido do desenho do jogo: `jogo6432`/`jogo5321` → `drop3`,
+`jogo6421` → `drop24`, `jogo643`/`jogo532`/`jogo421` (3 cordas com salto) →
+`aberta`. E o jogo vale ao pé da letra: pedir `jogo6432` com `drop2` é um erro
+(o Drop-2 usa 4 cordas adjacentes), não um chute.
 
 ### Exemplos para você experimentar
 
@@ -356,6 +368,46 @@ entre o baixo e as vozes de cima. Peça acrescentando a palavra `drop3`:
 bun run cli.ts "C7M pf jogo6432 drop3"     ->  8 x 9 9 8 x
 ```
 
+### Drop 2&4 (`drop24`)
+
+A terceira família clássica: **duas cordas puladas** — baixo na 6ª, vozes de
+cima na 4-2-1 (`jogo6421`). Sonoridade bem aberta, quase pianística:
+
+```
+bun run cli.ts "C7 pf jogo6421"            ->  8 x 5 x 5 6
+```
+
+### Tríades abertas (`aberta`)
+
+A tríade com a **voz do meio levantada uma oitava** (o "Drop 2" da tríade) —
+o som aberto que todo método de tríades ensina. Jogos com um salto depois do
+baixo: `jogo643`, `jogo532`, `jogo421` (um jogo explícito pode escolher outro
+espaçamento, ex.: `jogo642`):
+
+```
+bun run cli.ts "C pf jogo643 aberta"       ->  8 x 5 9 x x
+bun run cli.ts "D pf jogo532"              ->  x 5 x 2 7 x   (o jogo já diz o modo)
+```
+
+Para uma tríade aberta **grave** com corda solta, combine com `soltas`
+(ex.: `C pf jogo532 aberta soltas` → `x 3 x 0 5 x`).
+
+### Escolhendo as vozes (`vozes:`)
+
+Por padrão, quem decide quais graus entram no desenho é o dicionário de
+acordes. Com `vozes:` **você** decide — sem fundamental, shell, a redução que
+o seu arranjo pede:
+
+```
+bun run cli.ts "C7 pf jogo5432 vozes:3,5,b7,9"   # dominante sem fundamental (PF*)
+bun run cli.ts "C7 pf jogo643 vozes:1,3,b7"      ->  8 x 8 9 x x   (o shell de jazz)
+```
+
+Três graus escolhidos funcionam com `aberta`/`triad`; quatro, com
+`drop2`/`drop3`/`drop24`; qualquer quantidade, com `stacked`. As inversões
+seguem a ordem dos graus empilhados (num voicing sem fundamental, a "PF*" é o
+empilhamento a partir do grau mais grave).
+
 ### Cordas soltas (`soltas`)
 
 Por padrão, toda pegada sai **totalmente pisada** — transponível para as 12
@@ -363,6 +415,15 @@ tonalidades, que é a filosofia do método. Acrescente a palavra `soltas` ao
 pedido e o gerador passa a usar cordas soltas quando elas deixam a pegada mais
 grave: `E7 pf jogo6543 soltas` dá o clássico `0 2 0 1 x x`. No desenho, a corda
 solta aparece como bolinha **vazada** acima da pestana (pisada = cheia).
+
+**`soltas` combina com `min`** — e o `min` vale só para os dedos: uma corda
+solta é a casa 0, mas não conta como posição da mão. Assim
+`E7 pf jogo6543 min7 soltas` dá `0 14 12 13 x x` — o baixo Mi solto soando
+grave com a mão lá em cima, a partir da casa 12 (a primeira ocorrência da
+pegada na casa 7 ou acima). Se a pegada aberta clássica já tem os dedos na
+altura pedida, ela fica: `A7 pf jogo5432 min2 soltas` continua `x 0 2 0 2 x`.
+No desenho, a janela acompanha os dedos (os números de traste dizem onde), com
+as soltas vazadas por cima.
 
 ### Modo `stacked` (empilhado)
 
@@ -380,6 +441,35 @@ o que couber e avisa.)
 ### Modo `triad` (tríade)
 
 Voicing de 3 notas em 3 cordas adjacentes, para tríades simples e suas inversões.
+
+### Tudo combina — a tabela
+
+Cada modo tem seus jogos e seu número de vozes; todo o resto (`min`, `max`,
+`span`, `vozes:`, `soltas`, `--janela`) funciona com **qualquer** modo:
+
+| modo | nº de vozes | jogos válidos | o jogo sozinho já pede o modo? |
+|------|-------------|---------------|-------------------------------|
+| `drop2` (padrão) | 4 | `6543` `5432` `4321` (adjacentes) | — (é o padrão) |
+| `drop3` | 4 | `6432` `5321` | **sim** |
+| `drop24` | 4 | `6421` | **sim** |
+| `aberta` | 3 | `643` `532` `421` (ou outro espaçamento explícito: `642`, `531`…) | **sim** (3 cordas com salto) |
+| `triad` | 3 | 3 cordas adjacentes | — |
+| `stacked` | qualquer | qualquer jogo (adjacente ou não) | 4 cordas com salto fora dos padrões acima |
+
+E as combinações que valem conhecer:
+
+```
+E7 pf jogo6543 min7 soltas          ->  0 14 12 13 x x   # solta grave + mão aguda
+C7M pf str5 min12 max20             ->  x 15 17 16 17 x  # região delimitada do braço
+C7 pf jogo5432 vozes:3,5,b7,9       ->  x 5 5 3 5 x      # sem fundamental (PF*)
+C7 pf jogo643 vozes:1,3,b7          ->  8 x 8 9 x x      # shell de jazz (vozes + aberta)
+C pf jogo532 aberta soltas          ->  x 3 x 0 5 x      # tríade aberta com solta
+C7M pf jogo5432 --janela 5          ->  (mesma pegada, janela de 5 casas p/ alinhar a fileira)
+```
+
+Se `min`+`max` não puderem valer juntos, o `max` prevalece (vem a pegada mais
+alta que cabe); um `span` impossível degrada para a melhor pegada disponível —
+a ferramenta sempre entrega um desenho, nunca um braço vazio.
 
 ### Modo manual (`--frets`) — a saída de emergência
 
@@ -516,7 +606,10 @@ vai usar as que precisar — o padrão já é o que você quer na maioria das ve
 | `--outdir <pasta>` | pasta de saída do `--batch` (padrão: `./diagrams`) |
 | `--gallery` | cria também uma página `index.html` com todos os carimbos |
 | `--frets "<6 trastes>"` | dita os trastes na mão, do grave ao agudo (`x` = abafada) |
-| `--inv <n>` `--start <1-6>` `--mode <m>` `--min <n>` | sobrescrevem campos do pedido |
+| `--inv <n>` `--start <1-6>` `--mode <m>` `--min <n>` `--max <n>` `--span <n>` | sobrescrevem campos do pedido |
+| `--vozes "<graus>"` | escolhe os graus tocados, ex.: `"3,5,b7,9"` (sem fundamental) ou `"1,3,b7"` (shell) |
+| `--open` | o mesmo que a palavra `soltas` no pedido — permite cordas soltas |
+| `--janela <n>` | nº mínimo de casas desenhadas — fixe (ex.: `--janela 5`) para alinhar uma fileira de carimbos |
 | `--label <degree\|note\|none>` | o que vai escrito nas bolinhas (grau, nota ou nada) |
 | `--title "<texto>"` | título personalizado · `--no-subtitle` esconde o subtítulo |
 | `--tuning "<6 notas>"` | afinação, ex.: `"E,A,D,G,B,E"`, `"D,A,D,G,B,E"` ou `"E2,A2,D3,G3,B3,E4"` |

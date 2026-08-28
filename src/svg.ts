@@ -31,13 +31,15 @@ interface Window {
   atNut: boolean;
 }
 
+// The window follows the FRETTED notes only: a high grip that also rides open
+// strings keeps its compact window up the neck ("Nfr" says where) with the open
+// markers above it; the nut is drawn only when the window starts at fret 1.
 function computeWindow(positions: FretPos[], minWindow: number): Window {
   const fretted = positions.filter((p) => p.fret > 0).map((p) => p.fret);
-  const hasOpen = positions.some((p) => p.fret === 0);
   if (fretted.length === 0) return { startFret: 1, frets: minWindow, atNut: true };
   const minF = Math.min(...fretted);
   const maxF = Math.max(...fretted);
-  if (hasOpen || maxF <= minWindow) {
+  if (maxF <= minWindow) {
     return { startFret: 1, frets: Math.max(minWindow, maxF), atNut: true };
   }
   return { startFret: minF, frets: Math.max(minWindow, maxF - minF + 1), atNut: false };

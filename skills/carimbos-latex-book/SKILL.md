@@ -67,8 +67,9 @@ Run the engine with a quoted spec. Write to the book's figure folder with `-o`:
 bun run "$PLUGIN/cli.ts" "C#m7 3rd str4" -o figuras/csharpm7_3a.svg
 ```
 
-The spec is `"<chord> [inversion] [string] [mode] [minfret] [labels]"` plus any
-option flags. The most common fields:
+The spec is `"<chord> [inversion] [string/jogo] [mode] [min/max/span] [vozes:…]
+[soltas] [labels]"` plus any option flags — the fields compose freely (see
+"How the options combine" in the reference). The most common fields:
 
 - **chord** — one token, no spaces: `C7M` `Cm7(b5)` `C13#11` `Bb7alt` `C/G`.
   Traditional Brazilian songbook spellings are understood too — `C7(9,13)`,
@@ -79,14 +80,23 @@ option flags. The most common fields:
   `row1`/`row2`/`row3` (bass on string 6/5/4), or `str6/str5/str4`. A Drop-2
   grip needs 4 adjacent strings, so the bass string must be **4, 5, or 6**.
 - **mode** — `drop2` (default, 4 notes) · `drop3` (skip-string shape, bass on
-  string 6/5: sets `jogo6432`/`jogo5321`) · `stacked` (one tone per string,
-  any start string, good for upper structures) · `triad`.
+  string 6/5: sets `jogo6432`/`jogo5321`) · `drop24` (two skips: `jogo6421`) ·
+  `aberta` (spread triad: `jogo643`/`jogo532`/`jogo421`) · `stacked` (one tone
+  per string, any start string, good for upper structures) · `triad` (close).
+  A skip-string jogo implies its mode, so `"C7 pf jogo6421"` just works.
+- **vozes** — `vozes:3,5,b7,9` hand-picks the voiced degrees (rootless
+  voicings, shells like `vozes:1,3,b7`); `max10`/`span4` bound the neck
+  region and hand stretch; `--janela <n>` fixes the drawn window height so a
+  row of carimbos aligns.
 - **soltas** — allow open strings in the grip (default is fully fretted /
   transposable, the method's philosophy); classic open grips like E7
-  `0 2 0 1` come out with it.
+  `0 2 0 1` come out with it. Combined with `minN`, the minimum applies to
+  the fretted notes only — `E7 pf jogo6543 min7 soltas` gives the open low E
+  under a hand parked at fret 12.
 - **flags** — everything else: `--label note|none`, `--strict`,
-  `--tuning "D,A,D,G,B,E"`, `--frets "x x 9 9 9 9"`, `--min N`, `--scale F`,
-  `--title "…"`, `--no-subtitle`, `--accent/--ink/--paper "<cor>"`.
+  `--tuning "D,A,D,G,B,E"`, `--frets "x x 9 9 9 9"`, `--min/--max/--span N`,
+  `--vozes "<graus>"`, `--open`, `--janela N`, `--scale F`, `--title "…"`,
+  `--no-subtitle`, `--accent/--ink/--paper "<cor>"`.
 
 For the full chord vocabulary, every flag, and the voicing rules, read
 `references/spec-and-latex.md` (next to this file). Do not guess syntax — that

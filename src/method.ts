@@ -30,13 +30,16 @@ export interface MethodInput {
 const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 const r2 = (n: number) => Math.round(n * 100) / 100;
 
+// The window follows the FRETTED notes only: a high grip that also rides open
+// strings gets its compact window up the neck (the fret numbers say where), with
+// the open markers above it; the thick nut only appears when the window starts
+// at fret 1.
 function windowFor(positions: FretPos[], minFrets: number) {
   const fretted = positions.filter((p) => p.fret > 0).map((p) => p.fret);
-  const open = positions.some((p) => p.fret === 0);
   if (fretted.length === 0) return { startFret: 1, nFrets: minFrets };
   const lo = Math.min(...fretted);
   const hi = Math.max(...fretted);
-  if (open || hi <= minFrets) return { startFret: 1, nFrets: Math.max(minFrets, hi) };
+  if (hi <= minFrets) return { startFret: 1, nFrets: Math.max(minFrets, hi) };
   return { startFret: lo, nFrets: Math.max(minFrets, hi - lo + 1) };
 }
 

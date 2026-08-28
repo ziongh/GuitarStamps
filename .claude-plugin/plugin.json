@@ -1,8 +1,8 @@
 {
   "name": "carimbos",
   "displayName": "Carimbos (GuitarStamps)",
-  "description": "Guitar chord-diagram (carimbo) generation for LaTeX method books — Drop-2 voicings, inversions, string sets, pt-BR cifragem. Ships the carimbos-latex-book skill plus the full engine (cli.ts/src).",
-  "version": "0.3.0",
+  "description": "Guitar chord-diagram (carimbo) generation for LaTeX method books — Drop-2/Drop-3/Drop-2&4 voicings, spread triads, custom voices, inversions, string sets, open strings, pt-BR cifragem. Ships the carimbos-latex-book skill plus the full engine (cli.ts/src).",
+  "version": "0.4.0",
   "author": {
     "name": "Rodrigo Leal",
     "email": "r.risk.leal@gmail.com",
