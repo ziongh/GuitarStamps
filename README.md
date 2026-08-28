@@ -566,6 +566,21 @@ bun test
 
 ---
 
+### Como plugin do Claude Code (skill para livros LaTeX)
+
+Este repositório também é um **marketplace de plugin** do Claude Code: o plugin
+`carimbos` traz a skill `carimbos-latex-book` (gera os diagramas e os embute em
+livros LaTeX) junto com o motor. Em qualquer projeto:
+
+```
+/plugin marketplace add ziongh/GuitarStamps
+/plugin install carimbos@guitarstamps
+```
+
+Um push neste repositório atualiza o pacote (`bun add
+github:ziongh/GuitarStamps`), o site (GitHub Pages) e o plugin/skill — uma
+fonte só para tudo.
+
 ### O site (para quem desenvolve)
 
 A pasta `site/` contém o **Gerador de Carimbos** — uma página estática que

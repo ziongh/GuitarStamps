@@ -1,0 +1,18 @@
+# Exemplo de lista para o fluxo do livro:
+#   bun run scripts/book_latex.ts assets/exemplo-lista.txt --outdir figuras
+#
+# Um pedido por linha. "#" é comentário (o "#" de C#m7 é preservado).
+# "pedido => nome" define o nome do arquivo/figura.
+
+# As quatro inversões de C7M no grupo 5432 (baixo na 5ª corda)
+C7M pf row2 => c7m_pf
+C7M 1a row2 => c7m_1a
+C7M 2a row2 => c7m_2a
+C7M 3a row2 => c7m_3a
+
+# Alguns acordes de jazz comuns
+Cm7 pf row2   => cm7_pf
+Cm7b5 pf row2 => cm7b5_pf
+C#m7 3rd str4 => csharpm7_3a
+Bb7b9 pf row3 => bb7b9_pf
+Cm7 pf str4 stacked => cm7_stacked

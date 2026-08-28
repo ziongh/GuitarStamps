@@ -1,0 +1,15 @@
+{
+  "name": "guitarstamps",
+  "owner": {
+    "name": "ziongh",
+    "url": "https://github.com/ziongh"
+  },
+  "description": "GuitarStamps — guitar chord-diagram (carimbo) tooling: engine, CLI, web generator and the carimbos-latex-book skill.",
+  "plugins": [
+    {
+      "name": "carimbos",
+      "source": "./",
+      "description": "Chord-diagram (carimbo) generation for LaTeX method books: the carimbos-latex-book skill + the guitarstamps engine (CLI, batch, gallery). Web version: https://ziongh.github.io/GuitarStamps/"
+    }
+  ]
+}

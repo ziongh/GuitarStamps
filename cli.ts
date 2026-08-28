@@ -10,10 +10,9 @@ import { mkdir } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import {
   diagramFromArgs,
-  diagramFromSpec,
-  optionsFromFlags,
   parseArgs,
   slugify,
+  tokenize,
 } from "./src/index";
 
 const HELP = `carimbos — gera diagramas de acordes (carimbos) em SVG (voicings Drop-2 e mais)
@@ -41,7 +40,8 @@ GRAMÁTICA DO PEDIDO
 OPÇÕES
   -o, --out <arquivo>   arquivo de saída (modo avulso; padrão ./<nome>.svg)
       --stdout          mostra o SVG na tela em vez de gravar um arquivo
-      --batch <arquivo> lê um pedido por linha (# = comentário; "pedido => nome" define o nome do arquivo)
+      --batch <arquivo> lê um pedido por linha, opções inclusive (# = comentário;
+                        "pedido => nome" define o nome do arquivo)
       --outdir <pasta>  pasta de saída do --batch (padrão ./diagrams)
       --gallery         gera também uma página index.html com todos os carimbos (com --batch)
       --frets "<6>"     trastes manuais, do grave ao agudo, ex.: "x x 9 9 9 9"
@@ -69,7 +69,6 @@ async function writeFile(path: string, content: string) {
 
 async function runBatch(file: string, flags: Record<string, string | boolean>) {
   const outdir = String(flags.outdir ?? "diagrams");
-  const base = optionsFromFlags(flags);
   const text = await Bun.file(file).text();
   const lines = text.split(/\r?\n/);
   const made: { name: string; spec: string; svg: string; warnings: string[] }[] = [];
@@ -85,7 +84,13 @@ async function runBatch(file: string, flags: Record<string, string | boolean>) {
     if (arrow.length === 2) { spec = arrow[0].trim(); name = arrow[1].trim(); }
     const fileName = (name || slugify(spec)) + ".svg";
     try {
-      const res = diagramFromSpec(spec, base);
+      // each batch line is a FULL pedido — spec words + option flags — in the
+      // same shared command language; per-line flags override the global ones.
+      const lineArgs = parseArgs(tokenize(spec));
+      const res = diagramFromArgs({
+        positionals: lineArgs.positionals,
+        flags: { ...flags, ...lineArgs.flags },
+      });
       await writeFile(join(outdir, fileName), res.svg);
       made.push({ name: fileName, spec, svg: res.svg, warnings: res.warnings });
       const warn = res.warnings.length ? "  ⚠ " + res.warnings.join("; ") : "";
