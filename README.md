@@ -566,20 +566,62 @@ bun test
 
 ---
 
-### Como plugin do Claude Code (skill para livros LaTeX)
+### Instalando a skill no Claude (plugin do Claude Code)
 
-Este repositório também é um **marketplace de plugin** do Claude Code: o plugin
-`carimbos` traz a skill `carimbos-latex-book` (gera os diagramas e os embute em
-livros LaTeX) junto com o motor. Em qualquer projeto:
+Este repositório também é um **marketplace de plugin** do Claude Code. O plugin
+chama-se `carimbos` e traz a skill **`carimbos-latex-book`** — com ela, o Claude
+sabe gerar os diagramas e embuti-los num livro LaTeX sozinho (é o que o livro de
+harmonia usa no `/atualizar`), junto com todo o motor desta ferramenta.
+
+**Passo a passo (uma única vez, em qualquer computador com o Claude Code):**
+
+1. Abra o Claude Code (o programa `claude` no terminal, em qualquer pasta).
+2. Cadastre este repositório como fonte de plugins — digite:
+
+   ```
+   /plugin marketplace add ziongh/GuitarStamps
+   ```
+
+3. Instale o plugin:
+
+   ```
+   /plugin install carimbos@guitarstamps
+   ```
+
+4. Se aparecer a sugestão, digite `/reload-plugins` (ou feche e abra o Claude).
+   Pronto — a skill fica disponível em **todos** os seus projetos, e o Claude a
+   usa sozinho sempre que o assunto for diagrama de acorde em LaTeX.
+
+**Como conferir:** digite `/plugin` e veja `carimbos` na lista de instalados —
+a skill aparece como `carimbos:carimbos-latex-book`.
+
+**Atualizações:** quando este repositório ganhar melhorias, o Claude pega a
+versão nova sozinho ao abrir uma nova sessão. Para forçar agora:
 
 ```
-/plugin marketplace add ziongh/GuitarStamps
-/plugin install carimbos@guitarstamps
+/plugin marketplace update guitarstamps
 ```
 
-Um push neste repositório atualiza o pacote (`bun add
-github:ziongh/GuitarStamps`), o site (GitHub Pages) e o plugin/skill — uma
-fonte só para tudo.
+**Para um projeto de equipe** (todo mundo que abrir o repositório recebe a
+oferta de instalar automaticamente), acrescente ao `.claude/settings.json` do
+projeto:
+
+```json
+{
+  "extraKnownMarketplaces": {
+    "guitarstamps": {
+      "source": { "source": "github", "repo": "ziongh/GuitarStamps" }
+    }
+  },
+  "enabledPlugins": {
+    "carimbos@guitarstamps": true
+  }
+}
+```
+
+(É exatamente o que o livro de harmonia faz.) Um push neste repositório
+atualiza o pacote (`bun add github:ziongh/GuitarStamps`), o site (GitHub Pages)
+e o plugin/skill — uma fonte só para tudo.
 
 ### O site (para quem desenvolve)
 
