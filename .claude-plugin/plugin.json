@@ -4,9 +4,11 @@
   "description": "Guitar chord-diagram (carimbo) generation for LaTeX method books — Drop-2 voicings, inversions, string sets, pt-BR cifragem. Ships the carimbos-latex-book skill plus the full engine (cli.ts/src).",
   "version": "0.2.0",
   "author": {
-    "name": "ziongh",
+    "name": "Rodrigo Leal",
+    "email": "r.risk.leal@gmail.com",
     "url": "https://github.com/ziongh/GuitarStamps"
   },
   "repository": "https://github.com/ziongh/GuitarStamps",
-  "homepage": "https://ziongh.github.io/GuitarStamps/"
+  "homepage": "https://ziongh.github.io/GuitarStamps/",
+  "license": "MIT"
 }
