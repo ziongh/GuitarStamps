@@ -34,6 +34,7 @@ GRAMÁTICA DO PEDIDO
     modo        drop2 (padrão p/ 4 notas) | drop3 (baixo na 6ª/5ª, uma corda pulada:
                 jogo6432/jogo5321) | stacked (empilhado) | triad (tríade)
     traste-mín  min7  (empurra a pegada para o 7º traste ou acima)
+    soltas      permite cordas soltas na pegada (padrão: tudo pisado, transponível)
     rótulos     labels:degree (padrão) | labels:note | labels:none
     estilo      method (padrão; notação pt-BR + legenda de vozes)
   ex.:  "C7M pf row2"     "C7M 1a row2"     "Bb7b9 pf group4321"     "Dmaj13 3a row1 stacked"
@@ -56,6 +57,7 @@ OPÇÕES
       --no-subtitle     esconde o subtítulo automático
       --tuning "<6>"    ex.: "E,A,D,G,B,E" (grave->agudo) ou "D,A,D,G,B,E"
       --strict          mantém a grafia enarmônica rigorosa (E𝄫 etc.) nos rótulos de nota
+      --open            o mesmo que a palavra "soltas" no pedido
       --accent "<cor>"  cor do anel do baixo (padrão = cor do traço)
       --ink "<cor>"     cor das linhas/bolinhas (padrão #1b1b1b)
       --paper "<cor>"   cor do fundo (padrão nenhuma/transparente)

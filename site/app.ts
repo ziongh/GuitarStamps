@@ -279,6 +279,27 @@ sozinho.`,
     ],
   },
   {
+    titulo: "Cordas soltas: a palavra soltas",
+    corpo: `Por padrão, toda pegada sai <b>totalmente pisada</b> — sem cordas
+soltas — porque assim ela é transponível para as 12 tonalidades, que é a
+filosofia do método. Mas às vezes você quer justamente o acorde aberto da
+primeira posição: acrescente a palavra <code>soltas</code> (ou a opção
+<code>--open</code>) e o gerador usa cordas soltas quando elas deixam a
+pegada mais grave. No desenho, a corda solta aparece como bolinha
+<b>vazada</b> acima da pestana; as pisadas continuam cheias.
+<br><br>
+Compare o E7: com <code>soltas</code> sai o clássico da primeira posição;
+sem, a mesma harmonia totalmente pisada, na casa 12. (Pegadas folclóricas
+que reorganizam as vozes — o Dó aberto, por exemplo — não são Drop-2: para
+essas, dite os trastes com <code>--frets</code>, na seção seguinte.)`,
+    exemplos: [
+      "E7 pf jogo6543 soltas",
+      "A7 pf jogo5432 soltas",
+      "D7 pf jogo4321 soltas",
+      "E7 pf jogo6543",
+    ],
+  },
+  {
     titulo: "--frets: você dita a pegada, casa por casa",
     corpo: `Já tem a pegada na mão e só quer o desenho bonito dela? Dite os
 trastes com <code>--frets "…"</code>: <b>seis valores, da corda mais grave

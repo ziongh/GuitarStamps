@@ -64,12 +64,13 @@ export function renderMethodSvg(input: MethodInput, opts: MethodOptions = {}): s
 
   const { startFret, nFrets } = windowFor(input.positions, opts.minFrets ?? 4);
   const gridH = ROW * nFrets;
+  const hasOpen = input.positions.some((p) => p.fret === 0);
 
   const padTop = 46 * k; // title
   const padRight = 12 * k;
   const padLeft = DOTR + 27 * k; // room for fret numbers, clears a dot on string 6
   const gridX = padLeft;
-  const gridY = padTop;
+  const gridY = padTop + (hasOpen ? DOTR * 2 + 12 * k : 0); // headroom for open markers
 
   // a dot on string 6 (leftmost column) would sit over the fret numbers
   const dotOnString6 = input.positions.some((p) => p.string === 6 && p.fret > 0);
@@ -112,10 +113,12 @@ export function renderMethodSvg(input: MethodInput, opts: MethodOptions = {}): s
   // fretboard fill
   P.push(`<rect x="${r2(gridX)}" y="${r2(gridY)}" width="${r2(gridW)}" height="${r2(gridH)}" fill="${board}"/>`);
 
-  // horizontal fret lines (thick)
+  // horizontal fret lines (thick); with open strings shown, the top line is
+  // the nut and gets extra weight (classic diagram convention)
   for (let row = 0; row <= nFrets; row++) {
     const y = gridY + row * ROW;
-    P.push(`<line x1="${r2(gridX - STRW / 2)}" y1="${r2(y)}" x2="${r2(gridX + gridW + STRW / 2)}" y2="${r2(y)}" stroke="${ink}" stroke-width="${r2(FRETW)}"/>`);
+    const w = row === 0 && startFret === 1 && hasOpen ? FRETW * 1.8 : FRETW;
+    P.push(`<line x1="${r2(gridX - STRW / 2)}" y1="${r2(y)}" x2="${r2(gridX + gridW + STRW / 2)}" y2="${r2(y)}" stroke="${ink}" stroke-width="${r2(w)}"/>`);
   }
   // vertical string lines (thin)
   for (let s = 1; s <= 6; s++) {
@@ -129,10 +132,21 @@ export function renderMethodSvg(input: MethodInput, opts: MethodOptions = {}): s
     P.push(`<text x="${r2(fretNumEnd)}" y="${r2(y)}" text-anchor="end" font-size="${r2(15 * k)}" font-weight="700" fill="${ink}">${startFret + row}</text>`);
   }
 
-  // note dots
+  // note dots — fretted notes are FILLED dots on the board; open strings are
+  // OUTLINED dots above the nut (shape encodes open vs fretted, not just place)
   for (const p of input.positions) {
-    if (p.fret === 0) continue; // (open strings are not used by closed voicings)
     const cx = sx(p.string);
+    if (p.fret === 0) {
+      const cy = gridY - DOTR - 8 * k;
+      if (accent !== "none" && p.isBass) {
+        P.push(`<circle cx="${r2(cx)}" cy="${r2(cy)}" r="${r2(DOTR + 3 * k)}" fill="none" stroke="${accent}" stroke-width="${r2(2.4 * k)}"/>`);
+      }
+      P.push(`<circle cx="${r2(cx)}" cy="${r2(cy)}" r="${r2(DOTR - 1.3 * k)}" fill="${paper === "none" ? "#ffffff" : paper}" stroke="${ink}" stroke-width="${r2(2.6 * k)}"/>`);
+      const lbl0 = input.dotLabel(p);
+      const fs0 = (lbl0.length > 2 ? 14 : 17) * k;
+      P.push(`<text x="${r2(cx)}" y="${r2(cy + fs0 * 0.34)}" text-anchor="middle" font-size="${r2(fs0)}" font-weight="700" fill="${ink}">${esc(lbl0)}</text>`);
+      continue;
+    }
     const cy = cellY(p.fret);
     if (accent !== "none" && p.isBass) {
       P.push(`<circle cx="${r2(cx)}" cy="${r2(cy)}" r="${r2(DOTR + 3 * k)}" fill="none" stroke="${accent}" stroke-width="${r2(2.4 * k)}"/>`);

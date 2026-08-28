@@ -75,6 +75,7 @@ export function optionsFromFlags(flags: Record<string, string | boolean>): Parti
   if (flags.label ?? flags.labels) o.labels = String(flags.label ?? flags.labels) as LabelMode;
   if (flags.title) o.title = String(flags.title);
   if (flags["no-subtitle"]) o.subtitle = null;
+  if (flags.open || flags.solta || flags.soltas) o.allowOpen = true;
   if (flags.tuning) o.tuning = parseTuning(String(flags.tuning));
   if (flags.accent) svg.accent = String(flags.accent);
   if (flags.ink) svg.ink = String(flags.ink);

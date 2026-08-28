@@ -36,6 +36,7 @@ export interface DiagramOptions {
   startString?: number; // string the bass note sits on (1..6)
   mode?: VoicingMode;
   minFret?: number; // push the grip up the neck to/above this fret
+  allowOpen?: boolean; // let the voicing use open strings (method style avoids them by default)
 
   // explicit voicing (overrides the theory engine)
   frets?: string; // "x x 9 9 9 9" low->high
@@ -118,7 +119,7 @@ export function makeDiagram(opts: DiagramOptions): DiagramResult {
     }
   }
 
-  const noOpen = style === "method"; // method-book voicings are fully fretted
+  const noOpen = style === "method" && !opts.allowOpen; // method voicings are fully fretted unless "soltas" is asked
   let res: VoicingResult;
   if (mode === "drop2") {
     res = drop2Voicing(chord.drop2Tones, inversion, startString, tuning, opts.minFret ?? 0, noOpen);
@@ -213,6 +214,7 @@ export function parseSpec(spec: string): DiagramOptions {
     else if (/^triad$/.test(tok)) out.mode = "triad";
     else if (/^(method|plain)$/.test(tok)) out.style = tok as DiagramStyle;
     else if ((m = tok.match(/^(?:min|minfret|pos)[:=]?(\d+)$/))) out.minFret = parseInt(m[1], 10);
+    else if (/^(soltas?|open)$/.test(tok)) out.allowOpen = true;
     else if ((m = tok.match(/^labels?[:=](degree|note|none)$/))) out.labels = m[1] as LabelMode;
     else unknown.push(tokRaw);
   }

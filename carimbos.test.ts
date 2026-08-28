@@ -219,3 +219,16 @@ test("min beyond the last occurrence returns the highest position, not the lowes
   const high = diag("C7M pf str5 min25").positions.map((p) => p.fret);
   expect(Math.min(...high)).toBe(15);
 });
+
+// ---- open strings (soltas) ---------------------------------------------------
+test("soltas allows the classic open grips; default stays fully fretted", () => {
+  expect(tab(diag("E7 pf jogo6543 soltas").positions)).toBe("0 2 0 1 x x");
+  expect(tab(diag("A7 pf jogo5432 soltas").positions)).toBe("x 0 2 0 2 x");
+  expect(tab(diag("D7 pf jogo4321 soltas").positions)).toBe("x x 0 2 1 2");
+  expect(tab(diag("E7 pf jogo6543").positions)).toBe("12 14 12 13 x x");
+});
+
+test("open notes are rendered as outlined markers above the nut", () => {
+  const { svg } = diag("A7 pf jogo5432 soltas");
+  expect(svg).toContain('stroke="#000000"'); // outlined open dot in ink
+});

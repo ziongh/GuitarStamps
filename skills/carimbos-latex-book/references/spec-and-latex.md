@@ -26,6 +26,7 @@ Only the chord is required; fields can appear in any order.
 | string     | `str5` · `row2` · `group5432`/`grupo5432`/`jogo5432` | where the **bass** note sits |
 | mode       | `drop2` (default for 4 notes) · `drop3` (bass on 6/5, one string skipped) · `stacked` · `triad` | how tones are distributed |
 | minfret    | `min7` | push the grip up to/above that fret |
+| open       | `soltas`/`open` (or `--open`) | allow open strings (default: fully fretted) |
 | labels     | `labels:degree` (default) · `labels:note` · `labels:none` | text inside the dots |
 | style      | `method` (default) | render style — only `method` is active (pt-BR) |
 

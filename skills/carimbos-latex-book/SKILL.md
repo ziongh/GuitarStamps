@@ -78,6 +78,9 @@ option flags. The most common fields:
 - **mode** — `drop2` (default, 4 notes) · `drop3` (skip-string shape, bass on
   string 6/5: sets `jogo6432`/`jogo5321`) · `stacked` (one tone per string,
   any start string, good for upper structures) · `triad`.
+- **soltas** — allow open strings in the grip (default is fully fretted /
+  transposable, the method's philosophy); classic open grips like E7
+  `0 2 0 1` come out with it.
 - **flags** — everything else: `--label note|none`, `--strict`,
   `--tuning "D,A,D,G,B,E"`, `--frets "x x 9 9 9 9"`, `--min N`, `--scale F`,
   `--title "…"`, `--no-subtitle`, `--accent/--ink/--paper "<cor>"`.

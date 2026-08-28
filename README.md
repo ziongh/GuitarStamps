@@ -13,6 +13,10 @@ limpo, em alta qualidade, pronto para o livro.
 > copie a linha para o Word. Todo o resto deste manual (terminal, instalação)
 > só é necessário para gerar os arquivos do livro em lote.
 
+> **📦 Também no npm:** [`guitarstamps`](https://www.npmjs.com/package/guitarstamps)
+> — `npm i guitarstamps` / `bun add guitarstamps`, ou sem instalar nada:
+> `bunx guitarstamps "C7M pf jogo5432"` (licença MIT).
+
 > **Para quem é este manual.** Ele parte do princípio de que você domina
 > harmonia e o violão/guitarra (Drop-2, inversões, tensões, encordoamento — esse
 > vocabulário é seu). O que ele **não** pressupõe é qualquer familiaridade com
@@ -352,6 +356,14 @@ entre o baixo e as vozes de cima. Peça acrescentando a palavra `drop3`:
 bun run cli.ts "C7M pf jogo6432 drop3"     ->  8 x 9 9 8 x
 ```
 
+### Cordas soltas (`soltas`)
+
+Por padrão, toda pegada sai **totalmente pisada** — transponível para as 12
+tonalidades, que é a filosofia do método. Acrescente a palavra `soltas` ao
+pedido e o gerador passa a usar cordas soltas quando elas deixam a pegada mais
+grave: `E7 pf jogo6543 soltas` dá o clássico `0 2 0 1 x x`. No desenho, a corda
+solta aparece como bolinha **vazada** acima da pestana (pisada = cheia).
+
 ### Modo `stacked` (empilhado)
 
 Empilha as notas do acorde **uma por corda**, subindo a partir da corda do baixo.
@@ -632,8 +644,9 @@ projeto:
 (É exatamente o que o livro de harmonia faz.) Um push neste repositório
 atualiza o pacote-git (`bun add github:ziongh/GuitarStamps`), o site (GitHub
 Pages) e o plugin/skill — uma fonte só para tudo. A ferramenta também está
-publicada no npm: `npm i guitarstamps` / `bun add guitarstamps`, ou sem
-instalar nada, `bunx guitarstamps "C7M pf jogo5432"` (licença MIT).
+publicada no npm — <https://www.npmjs.com/package/guitarstamps> —
+(`npm i guitarstamps` / `bun add guitarstamps`, ou sem instalar nada,
+`bunx guitarstamps "C7M pf jogo5432"`; licença MIT).
 
 ### O site (para quem desenvolve)
 
