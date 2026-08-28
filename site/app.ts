@@ -289,7 +289,10 @@ pegada mais grave. No desenho, a corda solta aparece como bolinha
 <b>vazada</b> acima da pestana; as pisadas continuam cheias.
 <br><br>
 Compare o E7: com <code>soltas</code> sai o clássico da primeira posição;
-sem, a mesma harmonia totalmente pisada, na casa 12. (Pegadas folclóricas
+sem, a mesma harmonia totalmente pisada, na casa 12. Combinar com
+<code>min</code>? Pode — e o <code>min</code> manda: a corda solta é a casa 0,
+então <code>E7 pf jogo6543 min7 soltas</code> sai pisado, na primeira posição
+a partir da casa 7. (Pegadas folclóricas
 que reorganizam as vozes — o Dó aberto, por exemplo — não são Drop-2: para
 essas, dite os trastes com <code>--frets</code>, na seção seguinte.)`,
     exemplos: [
