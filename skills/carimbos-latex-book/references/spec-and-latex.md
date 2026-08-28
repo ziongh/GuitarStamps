@@ -24,7 +24,7 @@ Only the chord is required; fields can appear in any order.
 | chord      | `C7M` `Cm7b5` `C13#11` `Bb7alt` `C/G` | one token, no spaces |
 | inversion  | `pf` `1a` `2a` `3a` · `root` `1st` `2nd` `3rd` · `inv0..inv5` | which chord tone is in the bass |
 | string     | `str5` · `row2` · `group5432`/`grupo5432`/`jogo5432` | where the **bass** note sits |
-| mode       | `drop2` (default for 4 notes) · `stacked` · `triad` | how tones are distributed |
+| mode       | `drop2` (default for 4 notes) · `drop3` (bass on 6/5, one string skipped) · `stacked` · `triad` | how tones are distributed |
 | minfret    | `min7` | push the grip up to/above that fret |
 | labels     | `labels:degree` (default) · `labels:note` · `labels:none` | text inside the dots |
 | style      | `method` (default) | render style — only `method` is active (pt-BR) |
@@ -62,6 +62,7 @@ top color tone). Edit `QUALITIES` in the plugin-root `src/theory.ts` to change r
 ## Voicing modes
 
 - **drop2** (default, 4 notes): compact grip on 4 adjacent strings. Valid start strings are **4, 5, 6** only.
+- **drop3** (4 notes): the skip-string shape — bass on string **6** (set 6-4-3-2, `jogo6432`) or **5** (set 5-3-2-1, `jogo5321`).
 - **stacked**: one tone per string upward from the start string; for big chords / upper-structures on any string.
 - **triad**: 3 notes on 3 adjacent strings.
 - **explicit**: `--frets "x x 9 9 9 9"` (low→high, `x`=muted). Optional chord name for labels/title.

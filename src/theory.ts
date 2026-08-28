@@ -243,18 +243,28 @@ const SEMI_TO_DEGREE: Record<number, string> = {
  * for. `alt` = fully-altered dominant (3, b7, b9, #9, #11, b13).
  */
 export function analyzeQuality(raw: string): string[] {
+  // A quality that is ONLY parenthesized tensions — C(9), C(9,13), C(#11) —
+  // means "added notes, no 7th" in Brazilian cifragem: read them as add-tokens.
+  let raw2 = raw.trim();
+  const onlyPar = raw2.match(/^\(([#b\d,\s]+)\)$/);
+  if (onlyPar) raw2 = onlyPar[1].split(/[,\s]+/).filter(Boolean).map((t) => "add" + t).join("");
   // parens, commas, dots and inner slashes are decorative/separators in
   // cifragem: m(maj7), 7(b9), C7(9,13), C7/9, C4/7 all read as their blocks.
-  let q = raw.replace(/[(),.\/]/g, "");
+  let q = raw2.replace(/[(),.\/]/g, "");
   // symbol / unicode normalization
-  q = q.replace(/ø/g, "m7b5").replace(/Δ/g, "maj7").replace(/\^/g, "maj7").replace(/[–—−]/g, "-");
-  q = q.replace(/b10/g, "#9"); // the old-school "7(b10)" = 7(#9)
+  q = q.replace(/ø|∅/g, "m7b5").replace(/[Δ∆▵]/g, "maj7").replace(/\^/g, "maj7").replace(/[–—−]/g, "-");
+  // old-school postfix accidentals: 5+/5-/9-/9+/11+/13-/10-  (e.g. C7/5-)
+  q = q.replace(/(13|11|10|9|6|5)\+/g, "#$1").replace(/(13|11|10|9|6|5)-/g, "b$1");
+  q = q.replace(/b10/g, "#9").replace(/#10/g, "#9"); // "7(b10)" = 7(#9)
+  q = q.replace(/([#b])4(?!\d)/g, "$111"); // #4 = #11 (b4 -> b11, rare but consistent)
+  q = q.replace(/^ma(?=\d)/i, "maj"); // "Cma7" = maj7
+  q = q.replace(/7m$/, "maj7"); // trailing lowercase m after 7: "C7m" = C7M
   q = q.replace(/°7|º7/g, "dim7").replace(/[°º]/g, "dim");
   q = q.replace(/M7/g, "maj7").replace(/M9/g, "maj9").replace(/M11/g, "maj11").replace(/M13/g, "maj13").replace(/M6/g, "6").replace(/7M/g, "maj7").replace(/9M/g, "maj9").replace(/Maj/g, "maj");
   q = q.replace(/^M$/, ""); // a lone "M" (CM) = major triad
   q = q.replace(/\+5/g, "#5").replace(/\+9/g, "#9").replace(/\+11/g, "#11").replace(/\+/g, "aug");
   q = q.replace(/-5/g, "b5").replace(/-9/g, "b9").replace(/-13/g, "b13");
-  q = q.toLowerCase().replace(/min/g, "m").replace(/-/g, "m");
+  q = q.toLowerCase().replace(/min/g, "m").replace(/mi(?=\d|$)/g, "m").replace(/-/g, "m");
 
   const consume = (re: RegExp) => { const had = re.test(q); q = q.replace(re, ""); return had; };
   const addsRaw: string[] = [];

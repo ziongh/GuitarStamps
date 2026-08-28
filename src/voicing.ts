@@ -105,13 +105,18 @@ function placeAscending(order: ChordTone[], strings: number[], tuning: Tuning, m
     candidates.push({ v, low, span: Math.max(...frets) - low, open: frets.includes(0) });
   }
   let pool = candidates.filter((c) => c.low >= minFret);
-  if (pool.length === 0) pool = candidates;
-  // prefer (if asked) fully-fretted grips, then grips within maxSpan, then the lowest position
+  // If minFret asks beyond the last reachable occurrence of this grip, give
+  // the HIGHEST available position (closest below the request) instead of
+  // silently wrapping to the lowest one.
+  const fellBack = pool.length === 0;
+  if (fellBack) pool = candidates;
+  // prefer (if asked) fully-fretted grips, then grips within maxSpan, then the
+  // lowest position at/above minFret
   pool.sort((a, b) => {
     if (opts.preferNoOpen && a.open !== b.open) return a.open ? 1 : -1;
     const as = a.span <= maxSpan ? 0 : 1;
     const bs = b.span <= maxSpan ? 0 : 1;
-    return as !== bs ? as - bs : a.low - b.low;
+    return as !== bs ? as - bs : fellBack ? b.low - a.low : a.low - b.low;
   });
   return pool[0].v;
 }
@@ -150,6 +155,36 @@ export function drop2Voicing(
   const b = bassIndex;
   const order = [tones4[b], tones4[(b + 2) % 4], tones4[(b + 3) % 4], tones4[(b + 1) % 4]];
   const strings = [startString, startString - 1, startString - 2, startString - 3];
+  return { positions: placeAscending(order, strings, tuning, minFret, { preferNoOpen }), warnings: [] };
+}
+
+/**
+ * Drop-3 voicing: the classic "skip one string" guitar shape — bass on the
+ * start string, one string skipped, upper voices on the next three. Valid
+ * start strings are 6 (set 6-4-3-2) and 5 (set 5-3-2-1). As with Drop-2, the
+ * requested inversion names the BASS note.
+ */
+export function drop3Voicing(
+  tones4: ChordTone[],
+  bassIndex: number,
+  startString: number,
+  tuning: Tuning,
+  minFret = 0,
+  preferNoOpen = false,
+): VoicingResult {
+  if (tones4.length !== 4) throw new Error(`O Drop-3 precisa de exatamente 4 notas; recebi ${tones4.length}.`);
+  if (bassIndex < 0 || bassIndex > 3) throw new Error(`A inversão de um acorde de 4 notas deve ser 0..3; recebi ${bassIndex}.`);
+  if (startString < 5 || startString > 6) {
+    throw new Error(
+      `O Drop-3 pula uma corda depois do baixo, então a corda do baixo deve ser a 6ª ` +
+        `(cordas 6-4-3-2, "jogo6432") ou a 5ª (cordas 5-3-2-1, "jogo5321"); recebi a ${startString}ª.`,
+    );
+  }
+  // Close voicing from t[b+3] has t[b] as its 3rd-from-top voice; dropping it
+  // an octave puts the requested tone in the bass:
+  const b = bassIndex;
+  const order = [tones4[b], tones4[(b + 3) % 4], tones4[(b + 1) % 4], tones4[(b + 2) % 4]];
+  const strings = [startString, startString - 2, startString - 3, startString - 4];
   return { positions: placeAscending(order, strings, tuning, minFret, { preferNoOpen }), warnings: [] };
 }
 

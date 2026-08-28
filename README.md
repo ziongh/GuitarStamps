@@ -218,7 +218,7 @@ Só o **acorde** é obrigatório. Os demais campos têm padrões sensatos.
 | **acorde**       | `C7M` · `Cm7b5` · `C13#11` · `Bb7alt` · `C/G` | a cifra, sem espaços (veja a [seção 7](#7-escrevendo-quase-qualquer-acorde)) |
 | **inversão**     | `pf` · `1a` · `2a` · `3a` | qual nota do acorde fica no baixo (`pf` = posição fundamental) |
 | **corda do baixo** | `str5` · `row2` · `group5432` | em que corda mora o **baixo** |
-| **modo**         | `drop2` (padrão) · `stacked` · `triad` | como as vozes são distribuídas (veja [seção 8](#8-como-a-ferramenta-monta-as-vozes)) |
+| **modo**         | `drop2` (padrão) · `drop3` (baixo na 6ª/5ª, uma corda pulada) · `stacked` · `triad` | como as vozes são distribuídas (veja [seção 8](#8-como-a-ferramenta-monta-as-vozes)) |
 | **traste mínimo** | `min7` | empurra a pegada para cima, a partir do 7º traste |
 | **rótulos**      | `labels:degree` (padrão) · `labels:note` · `labels:none` | o que vai escrito dentro das bolinhas |
 | **estilo**       | `method` (padrão) | o visual do desenho — por ora só o pt-BR (veja [seção 10](#10-o-estilo-de-desenho-pt-br)) |
@@ -340,6 +340,16 @@ a 3ª, a 7ª e a tensão de cima). Você pode reescrever essa redução — veja
 ```
 Bb13 pf str5   ->   x 1 5 1 3 x      (1, 13, ♭7, 3)
 G9   pf str5   ->   x 10 9 10 10 x   (1, 3, ♭7, 9)
+```
+
+### Modo `drop3`
+
+O outro voicing clássico da guitarra: o baixo na 6ª corda (conjunto 6-4-3-2,
+`jogo6432`) ou na 5ª (5-3-2-1, `jogo5321`), com **uma corda pulada** (abafada)
+entre o baixo e as vozes de cima. Peça acrescentando a palavra `drop3`:
+
+```
+bun run cli.ts "C7M pf jogo6432 drop3"     ->  8 x 9 9 8 x
 ```
 
 ### Modo `stacked` (empilhado)

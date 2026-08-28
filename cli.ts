@@ -31,7 +31,8 @@ GRAMÁTICA DO PEDIDO
     inversão    pf | 1a | 2a | 3a   (também root|1st|2nd|3rd, inv0..inv5)
     corda       str5 | row2 | group5432 | jogo5432   (onde fica o BAIXO)
                 row1=jogo6543 (6ª corda), row2=jogo5432 (5ª), row3=jogo4321 (4ª)
-    modo        drop2 (padrão p/ 4 notas) | stacked (empilhado) | triad (tríade)
+    modo        drop2 (padrão p/ 4 notas) | drop3 (baixo na 6ª/5ª, uma corda pulada:
+                jogo6432/jogo5321) | stacked (empilhado) | triad (tríade)
     traste-mín  min7  (empurra a pegada para o 7º traste ou acima)
     rótulos     labels:degree (padrão) | labels:note | labels:none
     estilo      method (padrão; notação pt-BR + legenda de vozes)
@@ -47,7 +48,7 @@ OPÇÕES
       --frets "<6>"     trastes manuais, do grave ao agudo, ex.: "x x 9 9 9 9"
       --inv <n>         inversão (sobrescreve o pedido)
       --start <1-6>     corda do baixo (sobrescreve o pedido)
-      --mode <m>        auto | drop2 | stacked | triad
+      --mode <m>        auto | drop2 | drop3 | stacked | triad
       --style <s>       method (padrão)   (o estilo 'plain' está desativado por enquanto)
       --min <n>         traste mínimo (empurra a pegada neck acima)
       --label <m>       degree | note | none

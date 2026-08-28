@@ -75,8 +75,9 @@ option flags. The most common fields:
 - **string** — `jogo5432`/`grupo5432`/`group5432` (bass on string 5), or
   `row1`/`row2`/`row3` (bass on string 6/5/4), or `str6/str5/str4`. A Drop-2
   grip needs 4 adjacent strings, so the bass string must be **4, 5, or 6**.
-- **mode** — `drop2` (default, 4 notes) · `stacked` (one tone per string, any
-  start string, good for upper structures) · `triad`.
+- **mode** — `drop2` (default, 4 notes) · `drop3` (skip-string shape, bass on
+  string 6/5: sets `jogo6432`/`jogo5321`) · `stacked` (one tone per string,
+  any start string, good for upper structures) · `triad`.
 - **flags** — everything else: `--label note|none`, `--strict`,
   `--tuning "D,A,D,G,B,E"`, `--frets "x x 9 9 9 9"`, `--min N`, `--scale F`,
   `--title "…"`, `--no-subtitle`, `--accent/--ink/--paper "<cor>"`.

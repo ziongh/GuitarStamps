@@ -6,6 +6,7 @@
 import { noteDisplay, noteName, notePc, parseChord, prettyDegree, ptDegree, type ChordTone, type Note, type ParsedChord } from "./theory";
 import {
   drop2Voicing,
+  drop3Voicing,
   explicitVoicing,
   inversionName,
   stackedVoicing,
@@ -25,7 +26,7 @@ export * from "./voicing";
 export * from "./svg";
 export * from "./method";
 
-export type VoicingMode = "auto" | "drop2" | "stacked" | "triad";
+export type VoicingMode = "auto" | "drop2" | "drop3" | "stacked" | "triad";
 export type DiagramStyle = "method" | "plain";
 
 export interface DiagramOptions {
@@ -105,7 +106,7 @@ export function makeDiagram(opts: DiagramOptions): DiagramResult {
   let stackedTones = chord.tones;
   if (chord.bass) {
     const bassPc = notePc(chord.bass);
-    const arr = mode === "drop2" ? chord.drop2Tones : chord.tones;
+    const arr = mode === "drop2" || mode === "drop3" ? chord.drop2Tones : chord.tones;
     const idx = arr.findIndex((t) => t.pc === bassPc);
     if (idx >= 0) {
       inversion = idx;
@@ -121,11 +122,13 @@ export function makeDiagram(opts: DiagramOptions): DiagramResult {
   let res: VoicingResult;
   if (mode === "drop2") {
     res = drop2Voicing(chord.drop2Tones, inversion, startString, tuning, opts.minFret ?? 0, noOpen);
+  } else if (mode === "drop3") {
+    res = drop3Voicing(chord.drop2Tones, inversion, startString, tuning, opts.minFret ?? 0, noOpen);
   } else {
     res = stackedVoicing(stackedTones, inversion, startString, tuning, opts.minFret ?? 0, noOpen);
   }
 
-  const usedTones = mode === "drop2" ? chord.drop2Tones : stackedTones;
+  const usedTones = mode === "drop2" || mode === "drop3" ? chord.drop2Tones : stackedTones;
   const rootless = !usedTones.some((t) => t.degree === "1");
   const bass = res.positions.find((p) => p.isBass)!;
   const notePrefer = opts.svg?.notePrefer ?? (chord.root.alter > 0 ? "sharp" : "flat");
@@ -205,6 +208,7 @@ export function parseSpec(spec: string): DiagramOptions {
     else if ((m = tok.match(/^row[:=]?([1-3])$/))) out.startString = 7 - parseInt(m[1], 10);
     else if ((m = tok.match(/^(?:group|grupo|jogo)[:=]?([1-6]{3,4})$/))) out.startString = parseInt(m[1][0], 10);
     else if (/^(drop-?2|d2)$/.test(tok)) out.mode = "drop2";
+    else if (/^(drop-?3|d3)$/.test(tok)) out.mode = "drop3";
     else if (/^(stack(ed)?)$/.test(tok)) out.mode = "stacked";
     else if (/^triad$/.test(tok)) out.mode = "triad";
     else if (/^(method|plain)$/.test(tok)) out.style = tok as DiagramStyle;

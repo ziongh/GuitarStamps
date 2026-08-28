@@ -96,9 +96,9 @@ export const EXEMPLOS: { grupo: string; nota: string; specs: string[] }[] = [
   },
   {
     grupo: "Subindo no braço (min)",
-    nota: "Acrescente min + o número da casa para gerar o desenho mais agudo.",
+    nota: "Acrescente min + o número da casa para gerar o desenho dali para cima.",
     specs: [
-      "C7M pf jogo5432", "C7M pf jogo5432 min7", "C7M pf jogo5432 min10",
+      "C7M pf jogo5432", "C7M pf jogo5432 min8", "C7M 2a jogo5432 min5",
     ],
   },
   {
@@ -148,8 +148,13 @@ As grafias tradicionais dos songbooks brasileiros também valem:
 <code>C7(9,13)</code> com vírgula dentro dos parênteses,
 <code>C7/9</code> com a barra indicando extensão, <code>C4</code> e
 <code>C4/7</code> (suspensos), <code>C2</code> (= add9),
-<code>C7(b10)</code> (= 7♯9) e até <code>Cº</code>, <code>Cø</code> e
-<code>C^</code>.
+<code>C7(b10)</code> (= 7♯9), os acidentes depois do número —
+<code>C7/5-</code>, <code>C7/9+</code> —, <code>C7(#4)</code> (= ♯11),
+<code>Cmi7</code>/<code>Cma7</code>, e os símbolos <code>Cº</code>,
+<code>Cø</code>, <code>C∆</code> e <code>C^</code>. Detalhe fino:
+<code>C(9)</code>, só com a tensão entre parênteses, é o acorde <i>com nona
+acrescentada e sem sétima</i> — diferente de <code>C9</code>, que é o
+dominante.
 <br><br>
 <b>Acorde com mais de 4 notas?</b> O desenho Drop-2 escolhe as 4 vozes mais
 importantes (fica com a terça, a sétima e a tensão mais colorida). Se quiser
@@ -166,6 +171,9 @@ famoso baixo pedal.`,
       "C4/7 pf jogo5432",
       "C2 pf jogo5432",
       "C7(b10) pf jogo6543",
+      "C7/5- pf jogo5432",
+      "C(9) pf jogo5432",
+      "Cmi7 pf jogo5432",
       "Csus4 pf jogo5432",
       "C7sus4 pf jogo5432",
       "Cadd9 pf jogo5432",
@@ -220,23 +228,25 @@ Clique nos três exemplos e veja o mesmo acorde caminhar do grave ao agudo.`,
   {
     titulo: "min: subir a pegada pelo braço",
     corpo: `Todo desenho sai, por padrão, na posição mais grave possível.
-Acrescente <code>min</code> + o número de uma casa para pedir "desta casa
-para cima". A pegada é a mesma; muda a região — e, claro, a altura real das
-notas.
+Acrescente <code>min</code> + o número de qualquer casa — <code>min5</code>,
+<code>min8</code>, <code>min12</code>… — para pedir "desta casa para cima".
 <br><br>
-<b>Para que serve?</b> Fugir da região das cordas soltas; tocar o mesmo
-acorde mais agudo para não embolar com outro instrumento; ou encontrar a
-mesma inversão em dois lugares do braço e escolher a que cai melhor na sua
-frase. Compare os três exemplos: é o mesmíssimo C7M.`,
+<b>Um detalhe de braço:</b> a mesma pegada só se repete 12 casas acima. Então
+o gerador entrega a primeira ocorrência <i>da pegada pedida</i> na casa que
+você indicou ou acima dela — C7M pf no jogo 5432 mora na casa 3 e de novo na
+15; <code>min8</code> te leva direto à 15. Quer uma posição <i>entre</i> as
+duas? É outra inversão que mora lá: no mesmo jogo, as posições de C7M são
+pf na casa 3, 1ª na 5, 2ª na 9 e 3ª na 12. (E se pedir uma casa além da
+última possível, o gerador devolve a mais alta que existe.)`,
     exemplos: [
       "C7M pf jogo5432",
-      "C7M pf jogo5432 min7",
-      "C7M pf jogo5432 min10",
+      "C7M pf jogo5432 min8",
       "C7M 2a jogo5432 min5",
+      "C7M 1a jogo5432, C7M 2a jogo5432, C7M 3a jogo5432",
     ],
   },
   {
-    titulo: "Os três modos de montar o acorde",
+    titulo: "Os modos de montar o acorde",
     corpo: `<b><code>drop2</code></b> (o padrão para acordes de 4 notas) é a
 distribuição do método: as quatro vozes em quatro cordas vizinhas, boa de
 pegar e de ouvir.
@@ -247,10 +257,19 @@ mais notas (um C13 inteiro, por exemplo), acordes nas cordas agudas (o
 Drop-2 não alcança), e para simplesmente ver todas as notas do acorde no
 braço.
 <br><br>
+<b><code>drop3</code></b> é o outro voicing clássico da guitarra: o baixo fica
+na 6ª ou na 5ª corda, <b>uma corda é pulada</b> (fica abafada), e as três vozes
+de cima vêm nas cordas seguintes — os conjuntos <code>jogo6432</code> e
+<code>jogo5321</code>. Sonoridade mais aberta que o Drop-2, muito usada em
+comping de jazz.
+<br><br>
 <b><code>triad</code></b> desenha tríades — três notas em três cordas. Se a
 cifra já é uma tríade (<code>C</code>, <code>Em</code>…), esse modo entra
 sozinho.`,
     exemplos: [
+      "C7M pf jogo6432 drop3",
+      "G7 pf jogo6432 drop3",
+      "C7M 1a jogo5321 drop3",
       "Dmaj13 3a row1 stacked",
       "Cmaj9 pf str5 stacked",
       "Dm11 pf str6 stacked",

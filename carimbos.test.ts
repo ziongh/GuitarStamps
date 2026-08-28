@@ -182,3 +182,40 @@ test("a note after the slash is still a bass, not an extension", () => {
   const c = parseChord("Dm7/G");
   expect(c.bass && noteName(c.bass)).toBe("G");
 });
+
+// ---- drop3 -------------------------------------------------------------------
+test("drop3 gives the textbook skip-string shapes", () => {
+  expect(tab(diag("C7M pf str6 drop3").positions)).toBe("8 x 9 9 8 x");
+  expect(tab(diag("G7 pf jogo6432 drop3").positions)).toBe("3 x 3 4 3 x");
+  expect(tab(diag("C7M 1a jogo5321 drop3").positions)).toBe("x 7 x 5 8 7");
+});
+
+test("drop3 rejects a bass string other than 6/5", () => {
+  expect(() => diag("C7M pf str4 drop3")).toThrow(/Drop-3/);
+});
+
+// ---- broader songbook spellings ---------------------------------------------
+test("postfix accidentals: C7/5-, C7/5+, C7/9-", () => {
+  expect(degs("C7/5-")).toEqual(["1", "3", "b5", "b7"]);
+  expect(degs("C7/5+")).toEqual(["#5", "1", "3", "b7"]);
+  expect(degs("C7/9-")).toEqual(["1", "3", "5", "b7", "b9"]);
+});
+
+test("bare parenthesized tensions are adds (no 7th): C(9), C(9,13)", () => {
+  expect(degs("C(9)")).toEqual(["1", "3", "5", "9"]);
+  expect(degs("C(9,13)")).toEqual(["1", "13", "3", "5", "9"]);
+});
+
+test("mi/ma/#4/symbol spellings", () => {
+  expect(degs("Cmi7")).toEqual(["1", "5", "b3", "b7"]);
+  expect(degs("Cma9")).toEqual(["1", "3", "5", "7", "9"]);
+  expect(degs("C7(#4)")).toEqual(["#11", "1", "3", "5", "b7"]);
+  expect(degs("C∆")).toEqual(["1", "3", "5", "7"]);
+  expect(degs("C∅")).toEqual(["1", "b3", "b5", "b7"]);
+  expect(degs("C7m")).toEqual(["1", "3", "5", "7"]);
+});
+
+test("min beyond the last occurrence returns the highest position, not the lowest", () => {
+  const high = diag("C7M pf str5 min25").positions.map((p) => p.fret);
+  expect(Math.min(...high)).toBe(15);
+});
