@@ -111,14 +111,21 @@ export const EXEMPLOS: { grupo: string; nota: string; specs: string[] }[] = [
 ];
 
 // ---- the complete guide (every clickable example is tested at build time) ---
-export const REFERENCIA: { titulo: string; corpo: string; exemplos: string[] }[] = [
+export const REFERENCIA: { parte?: string; titulo: string; corpo: string; exemplos: string[] }[] = [
   {
+    parte: "Parte 1 · A receita, palavra por palavra",
     titulo: "Como pedir um carimbo — a receita",
-    corpo: `Você escreve um pedido em três partes, separadas por espaço:
-<b>o acorde</b>, <b>a inversão</b> e <b>o jogo de cordas</b> — por exemplo,
+    corpo: `Um pedido tem três partes, separadas por espaço — e cada uma é
+pura música:
+<table>
+<tr><th><code>C7M</code></th><th><code>pf</code></th><th><code>jogo5432</code></th></tr>
+<tr><td><b>o acorde</b><br>a cifra, como você já escreve</td>
+<td><b>a inversão</b><br>qual nota fica no baixo</td>
+<td><b>o jogo de cordas</b><br>a região do braço</td></tr>
+</table>
 <code>C7M pf jogo5432</code> quer dizer "o acorde C7M, com a fundamental no
-baixo, nas cordas 5-4-3-2". A ordem das palavras depois do acorde não importa,
-e só o acorde é obrigatório. Cada parte está explicada com calma nas seções
+baixo, nas cordas 5-4-3-2". Só o acorde é obrigatório, e a ordem das palavras
+depois dele não importa. Cada parte está explicada com calma nas seções
 abaixo — e tudo o que começa com <code>--</code> é um ajuste fino opcional.`,
     exemplos: [
       "C7M pf jogo5432",
@@ -132,34 +139,36 @@ abaixo — e tudo o que começa com <code>--</code> é um ajuste fino opcional.`
 Sustenido é <code>#</code> e bemol é <code>b</code>, colados na letra:
 <code>F#m7</code>, <code>Bb7M</code>. Parênteses são opcionais —
 <code>Cm7(b5)</code> e <code>Cm7b5</code> são o mesmo acorde.
-<br><br>
-Funcionam as oito tétrades do método (<code>C7M</code>, <code>C7</code>,
-<code>Cm7</code>, <code>Cm7(b5)</code>, <code>Cdim</code>, <code>C6</code>,
-<code>Cm6</code>, <code>C7(b9)</code>) e muito mais: tríades
-(<code>C</code>, <code>Cm</code>, <code>Cdim</code>, <code>Caug</code>),
-acordes suspensos — sem a terça — (<code>Csus4</code>, <code>C7sus4</code>),
-o "power chord" (<code>C5</code>), acordes com nona
-(<code>C9</code>, <code>Cadd9</code>), com sexta e nona (<code>C6/9</code>),
-menor com sétima maior (<code>Cm(maj7)</code>), alterações
-(<code>C7#5</code>, <code>C7b13</code>, <code>C7#9</code>,
-<code>Bb7alt</code>)…
-<br><br>
-As grafias tradicionais dos songbooks brasileiros também valem:
-<code>C7(9,13)</code> com vírgula dentro dos parênteses,
-<code>C7/9</code> com a barra indicando extensão, <code>C4</code> e
-<code>C4/7</code> (suspensos), <code>C2</code> (= add9),
-<code>C7(b10)</code> (= 7♯9), os acidentes depois do número —
-<code>C7/5-</code>, <code>C7/9+</code> —, <code>C7(#4)</code> (= ♯11),
-<code>Cmi7</code>/<code>Cma7</code>, e os símbolos <code>Cº</code>,
-<code>Cø</code>, <code>C∆</code> e <code>C^</code>. Detalhe fino:
-<code>C(9)</code>, só com a tensão entre parênteses, é o acorde <i>com nona
-acrescentada e sem sétima</i> — diferente de <code>C9</code>, que é o
-dominante.
-<br><br>
+A cifra não sai de uma lista fixa: o gerador monta as notas por teoria, então
+quase tudo funciona —
+<table>
+<tr><th>família</th><th>exemplos</th></tr>
+<tr><td>as oito tétrades do método</td><td><code>C7M</code> <code>C7</code> <code>Cm7</code> <code>Cm7(b5)</code> <code>Cdim</code> <code>C6</code> <code>Cm6</code> <code>C7(b9)</code></td></tr>
+<tr><td>tríades</td><td><code>C</code> <code>Cm</code> <code>Cdim</code> <code>Caug</code></td></tr>
+<tr><td>suspensos (sem a terça) e "power chord"</td><td><code>Csus4</code> <code>C7sus4</code> <code>C5</code></td></tr>
+<tr><td>nonas e notas acrescentadas</td><td><code>C9</code> <code>Cadd9</code> <code>C6/9</code></td></tr>
+<tr><td>menor com sétima maior</td><td><code>Cm(maj7)</code></td></tr>
+<tr><td>alterações, à vontade e em qualquer ordem</td><td><code>C7#5</code> <code>C7b13</code> <code>C7#9</code> <code>Bb7alt</code></td></tr>
+</table>
+As grafias tradicionais dos songbooks brasileiros também valem, todas:
+<table>
+<tr><th>você escreve</th><th>o gerador entende</th></tr>
+<tr><td><code>C7(9,13)</code></td><td>tensões separadas por vírgula dentro dos parênteses</td></tr>
+<tr><td><code>C7/9</code></td><td>barra + número = extensão (C9), não baixo</td></tr>
+<tr><td><code>C4</code> · <code>C4/7</code></td><td>suspenso: o 4 no lugar da terça</td></tr>
+<tr><td><code>C2</code></td><td>= <code>Cadd9</code></td></tr>
+<tr><td><code>C7(b10)</code></td><td>= <code>C7(#9)</code></td></tr>
+<tr><td><code>C7/5-</code> · <code>C7/9+</code></td><td>acidente depois do número: 7(♭5), 7(♯9)</td></tr>
+<tr><td><code>C7(#4)</code></td><td>= <code>C7(#11)</code></td></tr>
+<tr><td><code>Cmi7</code> · <code>Cma7</code></td><td><code>mi</code> = menor, <code>ma</code> = maior</td></tr>
+<tr><td><code>Cº</code> · <code>Cø</code> · <code>C∆</code> · <code>C^</code></td><td>os símbolos: dim, m7(♭5), 7M, 7M</td></tr>
+<tr><td><code>C(9)</code></td><td>detalhe fino: só a tensão nos parênteses = nona acrescentada <i>sem sétima</i> — diferente de <code>C9</code>, o dominante</td></tr>
+</table>
 <b>Acorde com mais de 4 notas?</b> O desenho Drop-2 escolhe as 4 vozes mais
 importantes (fica com a terça, a sétima e a tensão mais colorida). Se quiser
 ver o acorde inteiro, nota por nota, use o modo empilhado — veja a seção
-"Os três modos".
+"Os modos de montar o acorde". E com <code>vozes:</code> quem escolhe as
+notas é você.
 <br><br>
 <b>Baixo com barra:</b> em <code>C/E</code> o baixo (E) é nota do acorde,
 então o desenho vira a inversão certa; em <code>Dm7/G</code> o baixo (G) é
@@ -187,13 +196,16 @@ famoso baixo pedal.`,
   },
   {
     titulo: "A inversão: qual nota fica no baixo",
-    corpo: `É a segunda palavra da receita. <code>pf</code> deixa a
-<b>fundamental</b> no baixo (posição fundamental); <code>1a</code> deixa a
-<b>terça</b>; <code>2a</code>, a <b>quinta</b>; <code>3a</code>, a
-<b>sétima</b>. Quem preferir pode escrever <code>root</code>,
-<code>1st</code>, <code>2nd</code>, <code>3rd</code> — ou
-<code>inv0</code> a <code>inv5</code> (os números altos servem para acordes
-empilhados de cinco ou mais notas).
+    corpo: `É a segunda palavra da receita:
+<table>
+<tr><th>você escreve</th><th>também vale</th><th>o baixo é a…</th></tr>
+<tr><td><code>pf</code></td><td><code>root</code> · <code>inv0</code></td><td><b>fundamental</b> (posição fundamental)</td></tr>
+<tr><td><code>1a</code></td><td><code>1st</code> · <code>inv1</code></td><td><b>terça</b></td></tr>
+<tr><td><code>2a</code></td><td><code>2nd</code> · <code>inv2</code></td><td><b>quinta</b></td></tr>
+<tr><td><code>3a</code></td><td><code>3rd</code> · <code>inv3</code></td><td><b>sétima</b></td></tr>
+</table>
+(Existem também <code>inv4</code> e <code>inv5</code>, para acordes
+empilhados de cinco ou mais notas.)
 <br><br>
 <b>Para que serve?</b> É o coração do método: clique nos quatro exemplos
 abaixo, um por um, e veja o mesmo C7M mudar de desenho conforme a nota do
@@ -209,23 +221,29 @@ baixo — são as quatro posições que o livro encadeia nas Formas 1 a 4.`,
   {
     titulo: "O jogo de cordas: em que região do braço",
     corpo: `A terceira palavra escolhe as cordas — ou seja, a região do
-instrumento: <code>jogo6543</code> é a região <b>grave</b> (baixo na 6ª
-corda), <code>jogo5432</code> a <b>média</b> (baixo na 5ª) e
-<code>jogo4321</code> a <b>aguda</b> (baixo na 4ª). Também servem
-<code>grupo5432</code>, <code>row2</code> (fileira 2 = mesmo jogo) e
-<code>str5</code> (a corda do baixo, diretamente).
-<br><br>
+instrumento:
+<table>
+<tr><th>jogo</th><th>região</th><th>baixo na…</th><th>também se escreve</th></tr>
+<tr><td><code>jogo6543</code></td><td><b>grave</b></td><td>6ª corda</td><td><code>row1</code> · <code>str6</code> · <code>grupo6543</code></td></tr>
+<tr><td><code>jogo5432</code></td><td><b>média</b></td><td>5ª corda</td><td><code>row2</code> · <code>str5</code> · <code>grupo5432</code></td></tr>
+<tr><td><code>jogo4321</code></td><td><b>aguda</b></td><td>4ª corda</td><td><code>row3</code> · <code>str4</code> · <code>grupo4321</code></td></tr>
+</table>
 <b>Repare:</b> o Drop-2 precisa de 4 cordas vizinhas, então o baixo só pode
 estar na 6ª, 5ª ou 4ª corda. Quer um acorde só nas cordas mais agudas, ou
 começando da 3ª corda? Use o modo empilhado (seção "Os modos de montar o
 acorde").
 <br><br>
-<b>E um jogo com salto de corda já diz qual é o voicing</b>, sem precisar
-escrever o modo: <code>jogo6432</code>/<code>jogo5321</code> pedem drop3,
-<code>jogo6421</code> pede drop24, e <code>jogo643</code>/<code>jogo532
-</code>/<code>jogo421</code> pedem a tríade aberta. O jogo vale ao pé da
-letra — as cordas do desenho são exatamente as que você escreveu.
-Clique nos exemplos e veja o mesmo acorde caminhar do grave ao agudo.`,
+<b>E um jogo com salto de corda já diz qual é o voicing</b> — não precisa
+escrever o modo:
+<table>
+<tr><th>jogo com salto</th><th>voicing que ele pede</th></tr>
+<tr><td><code>jogo6432</code> · <code>jogo5321</code></td><td><code>drop3</code></td></tr>
+<tr><td><code>jogo6421</code></td><td><code>drop24</code> (Drop 2&4)</td></tr>
+<tr><td><code>jogo643</code> · <code>jogo532</code> · <code>jogo421</code></td><td><code>aberta</code> (tríade aberta)</td></tr>
+</table>
+O jogo vale ao pé da letra — as cordas do desenho são exatamente as que você
+escreveu. Clique nos exemplos e veja o mesmo acorde caminhar do grave ao
+agudo.`,
     exemplos: [
       "C7M pf jogo6543",
       "C7M pf jogo5432",
@@ -236,55 +254,31 @@ Clique nos exemplos e veja o mesmo acorde caminhar do grave ao agudo.`,
     ],
   },
   {
-    titulo: "min, max e span: a região do braço e a mão",
-    corpo: `Todo desenho sai, por padrão, na posição mais grave possível.
-Acrescente <code>min</code> + o número de qualquer casa — <code>min5</code>,
-<code>min8</code>, <code>min12</code>… — para pedir "desta casa para cima".
-<code>max</code> é o contrário, o teto: <code>max10</code> mantém os dedos até
-a casa 10. Juntos, delimitam uma região (<code>min5 max10</code>). O
-<code>min</code> e o <code>max</code> valem para os <b>dedos</b>: cordas
-soltas (seção "Cordas soltas") ficam de fora da conta.
-<br><br>
-<b>Um detalhe de braço:</b> a mesma pegada só se repete 12 casas acima. Então
-o gerador entrega a primeira ocorrência <i>da pegada pedida</i> na casa que
-você indicou ou acima dela — C7M pf no jogo 5432 mora na casa 3 e de novo na
-15; <code>min8</code> te leva direto à 15. Quer uma posição <i>entre</i> as
-duas? É outra inversão que mora lá: no mesmo jogo, as posições de C7M são
-pf na casa 3, 1ª na 5, 2ª na 9 e 3ª na 12. (E se pedir uma casa além da
-última possível — ou um <code>min</code>+<code>max</code> impossíveis —, o
-gerador devolve a pegada mais próxima que existe.)
-<br><br>
-Por fim, <code>span</code> é a <b>abertura máxima da mão</b>, em trastes
-(padrão 6): <code>span4</code> para preferir pegadas mais compactas.`,
-    exemplos: [
-      "C7M pf jogo5432",
-      "C7M pf jogo5432 min8",
-      "C7M 2a jogo5432 min5",
-      "C7M pf jogo5432 min12 max20",
-      "C7M 1a jogo5432, C7M 2a jogo5432, C7M 3a jogo5432",
-    ],
-  },
-  {
+    parte: "Parte 2 · Esculpindo a pegada",
     titulo: "Os modos de montar o acorde",
-    corpo: `<b><code>drop2</code></b> (o padrão para acordes de 4 notas) é a
+    corpo: `O <b>modo</b> é o desenho do voicing — como as vozes se
+distribuem pelas cordas. Um mapa rápido, e depois cada um com calma:
+<table>
+<tr><th>modo</th><th>notas</th><th>cordas</th><th>caráter</th></tr>
+<tr><td><code>drop2</code> (padrão)</td><td>4</td><td>4 vizinhas</td><td>a pegada compacta do método</td></tr>
+<tr><td><code>drop3</code></td><td>4</td><td>um salto depois do baixo</td><td>mais aberto, comping de jazz</td></tr>
+<tr><td><code>drop24</code></td><td>4</td><td>dois saltos (6-4-2-1)</td><td>bem aberto, quase pianístico</td></tr>
+<tr><td><code>aberta</code></td><td>3</td><td>um salto depois do baixo</td><td>tríade aberta (spread)</td></tr>
+<tr><td><code>triad</code></td><td>3</td><td>3 vizinhas</td><td>tríade fechada</td></tr>
+<tr><td><code>stacked</code></td><td>qualquer</td><td>uma nota por corda</td><td>acordes grandes, upper structures</td></tr>
+</table>
+<b><code>drop2</code></b> (o padrão para acordes de 4 notas) é a
 distribuição do método: as quatro vozes em quatro cordas vizinhas, boa de
 pegar e de ouvir.
-<br><br>
-<b><code>stacked</code></b> (empilhado) põe <b>uma nota por corda</b>, subindo
-a partir da corda do baixo. Serve para três situações: acordes de cinco ou
-mais notas (um C13 inteiro, por exemplo), acordes nas cordas agudas (o
-Drop-2 não alcança), e para simplesmente ver todas as notas do acorde no
-braço.
 <br><br>
 <b><code>drop3</code></b> é o outro voicing clássico da guitarra: o baixo fica
 na 6ª ou na 5ª corda, <b>uma corda é pulada</b> (fica abafada), e as três vozes
 de cima vêm nas cordas seguintes — os conjuntos <code>jogo6432</code> e
-<code>jogo5321</code>. Sonoridade mais aberta que o Drop-2, muito usada em
-comping de jazz.
+<code>jogo5321</code>.
 <br><br>
 <b><code>drop24</code></b> (Drop 2&4) é a terceira família clássica: <b>duas
 cordas puladas</b> — baixo na 6ª, vozes de cima na 4-2-1, o conjunto
-<code>jogo6421</code>. Sonoridade bem aberta, quase pianística.
+<code>jogo6421</code>.
 <br><br>
 <b><code>aberta</code></b> desenha a <b>tríade aberta</b> (spread): a voz do
 meio sobe uma oitava — o som aberto que todo método de tríades ensina. Jogos
@@ -296,10 +290,15 @@ ex.: <code>jogo642</code>).
 cordas vizinhas. Se a cifra já é uma tríade (<code>C</code>, <code>Em</code>…),
 esse modo entra sozinho.
 <br><br>
-<b>Atalho:</b> um jogo com salto já diz o modo — <code>jogo6432</code>/<code>
-jogo5321</code> pedem drop3, <code>jogo6421</code> pede drop24 e
-<code>jogo643</code>/<code>jogo532</code>/<code>jogo421</code> pedem aberta,
-sem precisar escrever a palavra.`,
+<b><code>stacked</code></b> (empilhado) põe <b>uma nota por corda</b>, subindo
+a partir da corda do baixo. Serve para três situações: acordes de cinco ou
+mais notas (um C13 inteiro, por exemplo), acordes nas cordas agudas (o
+Drop-2 não alcança), e para simplesmente ver todas as notas do acorde no
+braço.
+<br><br>
+<b>Atalho:</b> um jogo com salto já diz o modo (a tabela da seção "O jogo de
+cordas") — <code>C7 pf jogo6421</code> já sai em Drop 2&4, sem escrever a
+palavra.`,
     exemplos: [
       "C7M pf jogo6432 drop3",
       "G7 pf jogo6432 drop3",
@@ -328,18 +327,50 @@ graus, separados por vírgula ou ponto (<code>vozes:3,5,b7,9</code> =
 Serve para o voicing <b>sem fundamental</b> (<code>vozes:3,5,b7,9</code> — o
 título ganha PF*, como nos acordes com ♭9), para o <b>shell de jazz</b>
 (<code>vozes:1,3,b7</code> em três cordas) e para qualquer redução que o seu
-arranjo pedir. Três graus combinam com <code>aberta</code>/<code>triad</code>;
-quatro, com <code>drop2</code>/<code>drop3</code>/<code>drop24</code>;
-qualquer quantidade, com <code>stacked</code>.
-<br><br>
-E dois ajustes finos da busca: <code>max</code> é o teto da mão no braço (com
-<code>min</code>, delimita uma região) e <code>span</code> é a abertura máxima
-da mão em trastes (padrão 6 — <code>span4</code> para mãos menores).`,
+arranjo pedir. Quantos graus com cada modo:
+<table>
+<tr><th>graus escolhidos</th><th>modos que combinam</th></tr>
+<tr><td>3</td><td><code>aberta</code> · <code>triad</code></td></tr>
+<tr><td>4</td><td><code>drop2</code> · <code>drop3</code> · <code>drop24</code></td></tr>
+<tr><td>qualquer quantidade</td><td><code>stacked</code></td></tr>
+</table>
+As inversões de um acorde com <code>vozes:</code> seguem a ordem dos graus
+empilhados — num voicing sem fundamental, a "PF*" é o empilhamento a partir
+do grau mais grave.`,
     exemplos: [
       "C7 pf jogo5432 vozes:3.5.b7.9",
       "C7 pf jogo643 vozes:1.3.b7",
       "C7M pf jogo5432 vozes:1.3.7",
       "C7M pf jogo5432 min5 max10",
+    ],
+  },
+  {
+    titulo: "min, max e span: a região do braço e a mão",
+    corpo: `Todo desenho sai, por padrão, na posição mais grave possível.
+Três palavras mudam isso:
+<table>
+<tr><th>palavra</th><th>o que faz</th></tr>
+<tr><td><code>min7</code></td><td>a <b>mão</b> da casa 7 para cima</td></tr>
+<tr><td><code>max10</code></td><td>a mão até a casa 10 (o teto); com <code>min</code>, delimita uma região — <code>min5 max10</code></td></tr>
+<tr><td><code>span4</code></td><td><b>abertura máxima da mão</b>: 4 trastes (padrão 6) — para preferir pegadas compactas</td></tr>
+</table>
+O <code>min</code> e o <code>max</code> valem para os <b>dedos</b>: cordas
+soltas (seção seguinte) ficam de fora da conta.
+<br><br>
+<b>Um detalhe de braço:</b> a mesma pegada só se repete 12 casas acima. Então
+o gerador entrega a primeira ocorrência <i>da pegada pedida</i> na casa que
+você indicou ou acima dela — C7M pf no jogo 5432 mora na casa 3 e de novo na
+15; <code>min8</code> te leva direto à 15. Quer uma posição <i>entre</i> as
+duas? É outra inversão que mora lá: no mesmo jogo, as posições de C7M são
+pf na casa 3, 1ª na 5, 2ª na 9 e 3ª na 12. (E se pedir uma casa além da
+última possível — ou um <code>min</code>+<code>max</code> impossíveis —, o
+gerador devolve a pegada mais próxima que existe.)`,
+    exemplos: [
+      "C7M pf jogo5432",
+      "C7M pf jogo5432 min8",
+      "C7M 2a jogo5432 min5",
+      "C7M pf jogo5432 min12 max20",
+      "C7M 1a jogo5432, C7M 2a jogo5432, C7M 3a jogo5432",
     ],
   },
   {
@@ -374,20 +405,30 @@ seguinte.)`,
   {
     titulo: "Tudo combina",
     corpo: `As palavras da receita não são gavetas separadas — <b>elas
-compõem</b>. Cada modo tem seu número de vozes (3 na <code>aberta</code> e na
-<code>triad</code>, 4 nos drops, qualquer um no <code>stacked</code>) e seus
-jogos; todo o resto — <code>min</code>, <code>max</code>, <code>span</code>,
-<code>vozes:</code>, <code>soltas</code>, <code>--janela</code> — funciona
-com qualquer modo.
-<br><br>
-Alguns pratos completos: solta grave com a mão aguda
-(<code>min7 soltas</code>); a região do braço delimitada
-(<code>min12 max20</code>); o shell de jazz (<code>vozes:1.3.b7</code> em
-jogo de 3 cordas com salto); a tríade aberta com corda solta
-(<code>aberta soltas</code>); e o dominante sem fundamental subido pelo
-braço (<code>vozes:3.5.b7.9 min7</code>). Se um pedido for impossível ao pé
-da letra, o gerador entrega a pegada mais próxima que existe — nunca um
-braço vazio.`,
+compõem</b>. Cada modo tem seu número de vozes e seus jogos; todo o resto —
+<code>min</code>, <code>max</code>, <code>span</code>, <code>vozes:</code>,
+<code>soltas</code>, <code>--janela</code> — funciona com <b>qualquer</b>
+modo:
+<table>
+<tr><th>modo</th><th>vozes</th><th>jogos válidos</th><th>o jogo sozinho já pede o modo?</th></tr>
+<tr><td><code>drop2</code> (padrão)</td><td>4</td><td><code>6543</code> <code>5432</code> <code>4321</code></td><td>— (é o padrão)</td></tr>
+<tr><td><code>drop3</code></td><td>4</td><td><code>6432</code> <code>5321</code></td><td><b>sim</b></td></tr>
+<tr><td><code>drop24</code></td><td>4</td><td><code>6421</code></td><td><b>sim</b></td></tr>
+<tr><td><code>aberta</code></td><td>3</td><td><code>643</code> <code>532</code> <code>421</code> (ou outro espaçamento: <code>642</code>, <code>531</code>…)</td><td><b>sim</b></td></tr>
+<tr><td><code>triad</code></td><td>3</td><td>3 cordas vizinhas</td><td>—</td></tr>
+<tr><td><code>stacked</code></td><td>qualquer</td><td>qualquer jogo</td><td>4 cordas com salto fora dos padrões acima</td></tr>
+</table>
+E os pratos completos que valem conhecer (clique em cada um):
+<table>
+<tr><th>combinação</th><th>o que sai</th></tr>
+<tr><td><code>min7 soltas</code></td><td>corda solta grave com a mão lá em cima</td></tr>
+<tr><td><code>min12 max20</code></td><td>a pegada dentro de uma região delimitada do braço</td></tr>
+<tr><td><code>vozes:1.3.b7</code> + jogo de 3 cordas com salto</td><td>o shell de jazz</td></tr>
+<tr><td><code>aberta soltas</code></td><td>tríade aberta com corda solta</td></tr>
+<tr><td><code>vozes:3.5.b7.9 min7</code></td><td>dominante sem fundamental, subido pelo braço</td></tr>
+</table>
+Se um pedido for impossível ao pé da letra, o gerador entrega a pegada mais
+próxima que existe — nunca um braço vazio.`,
     exemplos: [
       "E7 pf jogo6543 min7 soltas",
       "C7M pf jogo5432 min12 max20",
@@ -397,6 +438,7 @@ braço vazio.`,
     ],
   },
   {
+    parte: "Parte 3 · Ajustes finos (as opções com --)",
     titulo: "--frets: você dita a pegada, casa por casa",
     corpo: `Já tem a pegada na mão e só quer o desenho bonito dela? Dite os
 trastes com <code>--frets "…"</code>: <b>seis valores, da corda mais grave
@@ -415,14 +457,12 @@ qualquer diagrama avulso para uma apostila.`,
   },
   {
     titulo: "--label e --strict: o que está escrito nas bolinhas",
-    corpo: `Por padrão cada bolinha mostra o <b>grau</b> — 1, 3-, 5, 7M… — que
-é como o método pensa (você enxerga a <i>função</i> de cada dedo).
-<br><br>
-<b><code>--label note</code></b> troca pelos <b>nomes das notas</b> (C, E♭,
-G…): ótimo para o estudo de localização das notas no braço.
-<b><code>--label none</code></b> deixa as bolinhas vazias — imprima e deixe
-o aluno preencher, ou use quando o desenho já diz tudo.
-<br><br>
+    corpo: `<table>
+<tr><th>opção</th><th>as bolinhas mostram</th></tr>
+<tr><td>(padrão)</td><td>o <b>grau</b> — 1, 3-, 5, 7M… — como o método pensa: você enxerga a <i>função</i> de cada dedo</td></tr>
+<tr><td><code>--label note</code></td><td>os <b>nomes das notas</b> (C, E♭, G…): ótimo para o estudo de localização das notas no braço</td></tr>
+<tr><td><code>--label none</code></td><td><b>nada</b> — imprima e deixe o aluno preencher, ou use quando o desenho já diz tudo</td></tr>
+</table>
 Junto de <code>note</code>, o <b><code>--strict</code></b> mantém a grafia
 enarmônica <i>teórica</i>: o Abm7 mostra C♭ (a terça menor de A♭ de
 verdade), em vez de simplificar para B. Perfeito para a parte do livro que
@@ -440,10 +480,13 @@ ensina enarmonia. Também dá para pedir dentro da receita, com
     titulo: "--tuning: violão em outra afinação",
     corpo: `<code>--tuning "…"</code> muda a afinação do instrumento: seis
 notas, <b>da corda mais grave para a mais aguda</b>, entre aspas e separadas
-por vírgula. O gerador recalcula as casas sozinho.
-<br><br>
-Casos clássicos: <b>drop D</b> (<code>"D,A,D,G,B,E"</code>), <b>open G</b>
-(<code>"D,G,D,G,B,D"</code>), <b>DADGAD</b> (<code>"D,A,D,G,A,D"</code>).
+por vírgula. O gerador recalcula as casas sozinho. Os casos clássicos:
+<table>
+<tr><th>afinação</th><th>você escreve</th></tr>
+<tr><td>drop D</td><td><code>--tuning "D,A,D,G,B,E"</code></td></tr>
+<tr><td>open G</td><td><code>--tuning "D,G,D,G,B,D"</code></td></tr>
+<tr><td>DADGAD</td><td><code>--tuning "D,A,D,G,A,D"</code></td></tr>
+</table>
 Se precisar fixar as oitavas exatas de cada corda, escreva-as junto:
 <code>"E2,A2,D3,G3,B3,E4"</code>.`,
     exemplos: [
@@ -489,12 +532,16 @@ carimbos e todos saem com a janela da mesma altura, alinhados na página.`,
     titulo: "Cores e tamanho: --accent, --ink, --paper, --scale",
     corpo: `<b>Para o livro, deixe as cores padrão</b> — o miolo é impresso em
 preto, e os carimbos já nascem perfeitos para isso. Mas para um slide, um
-post ou uma apostila colorida: <code>--accent</code> pinta o anel que marca a
-nota do baixo; <code>--ink</code> muda a cor de linhas e bolinhas;
-<code>--paper</code> pinta o fundo; e <code>--scale</code> aumenta ou diminui
-o desenho inteiro (<code>1</code> é o tamanho normal). As cores aceitam
-qualquer valor de cor da web: <code>#1E3A5F</code>, <code>navy</code>,
-<code>white</code>…`,
+post ou uma apostila colorida:
+<table>
+<tr><th>chave</th><th>muda</th></tr>
+<tr><td><code>--accent</code></td><td>a cor do anel que marca a nota do baixo</td></tr>
+<tr><td><code>--ink</code></td><td>a cor de linhas e bolinhas</td></tr>
+<tr><td><code>--paper</code></td><td>a cor do fundo</td></tr>
+<tr><td><code>--scale</code></td><td>o tamanho do desenho inteiro (<code>1</code> = normal)</td></tr>
+</table>
+As cores aceitam qualquer valor de cor da web: <code>#1E3A5F</code>,
+<code>navy</code>, <code>white</code>…`,
     exemplos: [
       'C7M pf jogo5432 --accent "#C25B40"',
       'C7M pf jogo5432 --ink "#1E3A5F" --paper "#EEF2F7"',
@@ -502,6 +549,7 @@ qualquer valor de cor da web: <code>#1E3A5F</code>, <code>navy</code>,
     ],
   },
   {
+    parte: "Parte 4 · Do rascunho ao livro",
     titulo: "Várias receitas de uma vez",
     corpo: `Separe receitas por <b>vírgula</b> (ou uma por linha) e os
 desenhos saem lado a lado — perfeito para comparar e para montar progressões.
@@ -641,9 +689,16 @@ if (typeof document !== "undefined") {
   // ---- complete reference ---------------------------------------------------
   const referencia = $("referencia-corpo");
   for (const r of REFERENCIA) {
+    if (r.parte) {
+      const h = document.createElement("p");
+      h.className = "parte-ref";
+      h.textContent = r.parte;
+      referencia.appendChild(h);
+    }
     const sec = document.createElement("section");
     sec.className = "grupo-exemplos";
-    sec.innerHTML = `<h3>${r.titulo}</h3><p class="corpo-ref">${r.corpo}</p>`;
+    // corpo may contain <table>, which is not valid inside <p> — use a <div>
+    sec.innerHTML = `<h3>${r.titulo}</h3><div class="corpo-ref">${r.corpo}</div>`;
     if (r.exemplos.length) sec.appendChild(fichas(r.exemplos));
     referencia.appendChild(sec);
   }

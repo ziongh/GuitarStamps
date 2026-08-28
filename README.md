@@ -258,10 +258,16 @@ na 5ª corda). Como o Drop-2 precisa de mais três cordas **acima** do baixo, as
 cordas de baixo válidas são a **6ª, 5ª ou 4ª**.
 
 **Um jogo com salto de corda já diz qual é o voicing** — se você não escrever o
-modo, ele é deduzido do desenho do jogo: `jogo6432`/`jogo5321` → `drop3`,
-`jogo6421` → `drop24`, `jogo643`/`jogo532`/`jogo421` (3 cordas com salto) →
-`aberta`. E o jogo vale ao pé da letra: pedir `jogo6432` com `drop2` é um erro
-(o Drop-2 usa 4 cordas adjacentes), não um chute.
+modo, ele é deduzido do desenho do jogo:
+
+| jogo com salto | voicing que ele pede |
+|---|---|
+| `jogo6432` · `jogo5321` | `drop3` |
+| `jogo6421` | `drop24` (Drop 2&4) |
+| `jogo643` · `jogo532` · `jogo421` | `aberta` (tríade aberta) |
+
+E o jogo vale ao pé da letra: pedir `jogo6432` com `drop2` é um erro (o Drop-2
+usa 4 cordas adjacentes), não um chute.
 
 ### Exemplos para você experimentar
 
@@ -315,23 +321,53 @@ dominante totalmente alterado (♭9 ♯9 ♯11 ♭13).
 `no3 no5 omit3 omit5` → `Cadd9`, `Cmaj7add13`, `C7no5`. Parênteses são ignorados,
 então `Cm(maj7)` e `C7(b9)` funcionam.
 
+**Grafias de songbook brasileiro** — as grafias tradicionais valem todas:
+
+| você escreve | a ferramenta entende |
+|---|---|
+| `C7(9,13)` | tensões separadas por vírgula dentro dos parênteses |
+| `C7/9` · `C7/9/13` | barra + número = extensão (C9), não baixo |
+| `C4` · `C4/7` | suspenso: o 4 no lugar da terça |
+| `C2` | = `Cadd9` |
+| `C7(b10)` | = `C7(#9)` |
+| `C7/5-` · `C7/9+` | acidente depois do número: 7(♭5), 7(♯9) |
+| `C7(#4)` | = `C7(#11)` |
+| `Cmi7` · `Cma7` | `mi` = menor, `ma` = maior |
+| `Cº` · `Cø` · `C∆` · `C^` | os símbolos: dim, m7(♭5), 7M, 7M |
+| `C(9)` | só a tensão nos parênteses = nona acrescentada **sem sétima** — diferente de `C9`, o dominante |
+
 **Acordes com baixo (barra)** — escreva `/nota` no fim:
 
 - baixo que **é nota do acorde** → vira aquela **inversão**: `C/E` `Cmaj7/B` `G/B`
 - baixo que **não é nota do acorde** (pedal) → entra como a **nota mais grave**:
   `C/D` `Dm7/G` `F/G`
 
-> **Algumas convenções, para o resultado ser previsível:** uma extensão implica
-> tudo abaixo dela (`13` ⇒ 7, 9, 13); a 11 natural é omitida de acordes com 3ª
-> maior (porque ela bate com a 3ª), a menos que você escreva o próprio acorde de
-> 11 ou peça `#11`; o dominante alterado abre mão da 5ª natural. Quando um acorde
-> tem **mais de 4 notas**, o Drop-2 mantém a 3ª, a 7ª e a tensão de cima (a regra
-> de redução é editável — veja [Personalização](#personalização)); o modo
-> *stacked* distribui mais notas por mais cordas.
+**Algumas convenções, para o resultado ser previsível:**
+
+- uma extensão implica tudo abaixo dela: `13` ⇒ 7, 9, 13;
+- a 11 natural é omitida de acordes com 3ª maior (porque ela bate com a 3ª) —
+  a menos que você escreva o próprio acorde de 11, ou peça `#11`;
+- o dominante alterado abre mão da 5ª natural;
+- um acorde com **mais de 4 notas** é reduzido no Drop-2: fica a 3ª, a 7ª e a
+  tensão de cima (a regra é editável — veja [Personalização](#personalização));
+  o modo *stacked* distribui mais notas por mais cordas, e `vozes:` deixa a
+  escolha com você.
 
 ---
 
 ## 8. Como a ferramenta monta as vozes
+
+O **modo** é o desenho do voicing — como as vozes se distribuem pelas cordas.
+Um mapa rápido, e depois cada um com calma:
+
+| modo | notas | cordas | caráter |
+|---|---|---|---|
+| `drop2` (padrão) | 4 | 4 vizinhas | a pegada compacta do método |
+| `drop3` | 4 | um salto depois do baixo | mais aberto, comping de jazz |
+| `drop24` | 4 | dois saltos (6-4-2-1) | bem aberto, quase pianístico |
+| `aberta` | 3 | um salto depois do baixo | tríade aberta (spread) |
+| `triad` | 3 | 3 vizinhas | tríade fechada |
+| `stacked` | qualquer | uma nota por corda | acordes grandes, upper structures |
 
 ### Drop-2 (o padrão)
 
@@ -392,6 +428,25 @@ bun run cli.ts "D pf jogo532"              ->  x 5 x 2 7 x   (o jogo já diz o m
 Para uma tríade aberta **grave** com corda solta, combine com `soltas`
 (ex.: `C pf jogo532 aberta soltas` → `x 3 x 0 5 x`).
 
+### Modo `triad` (tríade fechada)
+
+Voicing de 3 notas em 3 cordas adjacentes, para tríades simples e suas
+inversões. Se a cifra já é uma tríade (`C`, `Em`…), esse modo entra sozinho.
+
+### Modo `stacked` (empilhado)
+
+Empilha as notas do acorde **uma por corda**, subindo a partir da corda do baixo.
+É o modo para acordes grandes e para *upper structures* nas cordas agudas. Funciona
+a partir de qualquer corda:
+
+```
+Dmaj13 inv3 str3 stacked  ->  x x x 6 5 7   (C#, E, B = a estrutura 7-9-13 no topo)
+```
+
+(Se o acorde tiver mais notas do que cordas disponíveis acima do baixo, ela toca
+o que couber e avisa. Um jogo explícito vale ao pé da letra: com `stacked`,
+qualquer conjunto descendente de cordas serve.)
+
 ### Escolhendo as vozes (`vozes:`)
 
 Por padrão, quem decide quais graus entram no desenho é o dicionário de
@@ -424,23 +479,6 @@ pegada na casa 7 ou acima). Se a pegada aberta clássica já tem os dedos na
 altura pedida, ela fica: `A7 pf jogo5432 min2 soltas` continua `x 0 2 0 2 x`.
 No desenho, a janela acompanha os dedos (os números de traste dizem onde), com
 as soltas vazadas por cima.
-
-### Modo `stacked` (empilhado)
-
-Empilha as notas do acorde **uma por corda**, subindo a partir da corda do baixo.
-É o modo para acordes grandes e para *upper structures* nas cordas agudas. Funciona
-a partir de qualquer corda:
-
-```
-Dmaj13 inv3 str3 stacked  ->  x x x 6 5 7   (C#, E, B = a estrutura 7-9-13 no topo)
-```
-
-(Se o acorde tiver mais notas do que cordas disponíveis acima do baixo, ela voz
-o que couber e avisa.)
-
-### Modo `triad` (tríade)
-
-Voicing de 3 notas em 3 cordas adjacentes, para tríades simples e suas inversões.
 
 ### Tudo combina — a tabela
 
@@ -598,6 +636,8 @@ programa de diagramação — assim ele permanece vetorial até a impressão fin
 Estas são "chaves" extras que você adiciona ao comando, depois do pedido. Você só
 vai usar as que precisar — o padrão já é o que você quer na maioria das vezes.
 
+**Arquivos e lote** — onde os desenhos são gravados:
+
 | opção | o que faz |
 |-------|-----------|
 | `-o`, `--out <arquivo>` | nome/lugar do arquivo de saída (padrão: `./<nome-automático>.svg`) |
@@ -605,18 +645,31 @@ vai usar as que precisar — o padrão já é o que você quer na maioria das ve
 | `--batch <arquivo>` | gera a partir de uma lista (um pedido por linha) — veja [seção 9](#9-gerando-o-método-inteiro-de-uma-vez) |
 | `--outdir <pasta>` | pasta de saída do `--batch` (padrão: `./diagrams`) |
 | `--gallery` | cria também uma página `index.html` com todos os carimbos |
+
+**O pedido por opções** — tudo o que as palavras da receita dizem, dito por chave
+(sobrescrevem os campos do pedido):
+
+| opção | o que faz |
+|-------|-----------|
 | `--frets "<6 trastes>"` | dita os trastes na mão, do grave ao agudo (`x` = abafada) |
-| `--inv <n>` `--start <1-6>` `--mode <m>` `--min <n>` `--max <n>` `--span <n>` | sobrescrevem campos do pedido |
+| `--inv <n>` `--start <1-6>` `--mode <m>` | inversão, corda do baixo, modo |
+| `--min <n>` `--max <n>` `--span <n>` | região do braço e abertura da mão |
 | `--vozes "<graus>"` | escolhe os graus tocados, ex.: `"3,5,b7,9"` (sem fundamental) ou `"1,3,b7"` (shell) |
 | `--open` | o mesmo que a palavra `soltas` no pedido — permite cordas soltas |
-| `--janela <n>` | nº mínimo de casas desenhadas — fixe (ex.: `--janela 5`) para alinhar uma fileira de carimbos |
-| `--label <degree\|note\|none>` | o que vai escrito nas bolinhas (grau, nota ou nada) |
-| `--title "<texto>"` | título personalizado · `--no-subtitle` esconde o subtítulo |
 | `--tuning "<6 notas>"` | afinação, ex.: `"E,A,D,G,B,E"`, `"D,A,D,G,B,E"` ou `"E2,A2,D3,G3,B3,E4"` |
+| `--label <degree\|note\|none>` | o que vai escrito nas bolinhas (grau, nota ou nada) |
 | `--strict` | mantém a grafia enarmônica rigorosa (E𝄫 etc.) nos rótulos de nota |
+
+**O visual do desenho** — título, janela, cores e tamanho:
+
+| opção | o que faz |
+|-------|-----------|
+| `--title "<texto>"` | título personalizado · `--no-subtitle` esconde o subtítulo |
+| `--janela <n>` | nº mínimo de casas desenhadas — fixe (ex.: `--janela 5`) para alinhar uma fileira de carimbos |
 | `--accent "<cor>"` | cor do anel do baixo · `--ink`/`--paper "<cor>"` cor do traço / do fundo |
 | `--scale <fator>` | tamanho do desenho (padrão: 1) |
-| `-h`, `--help` | mostra a ajuda resumida no terminal |
+
+E `-h`/`--help` mostra a ajuda resumida no terminal.
 
 Para ver essa lista a qualquer momento dentro do terminal, digite:
 

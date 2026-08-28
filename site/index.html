@@ -81,9 +81,25 @@
   }
   .grupo-exemplos h3 { font-family:"Inter",sans-serif; font-weight:600; color:var(--blue);
                        font-size:16.5px; margin:22px 0 2px; }
+  .parte-ref {
+    font-family:"Inter",sans-serif; font-weight:600; color:var(--navy);
+    font-size:17.5px; margin:38px 0 0; padding-left:10px;
+    border-left:4px solid var(--blue);
+  }
   .corpo-ref { margin:4px 0 10px; max-width:56em; }
   .corpo-ref code { font-family:"Inter",sans-serif; background:var(--mist); border-radius:4px;
                     padding:1px 6px; font-size:.9em; color:var(--navy); white-space:nowrap; }
+  .corpo-ref table {
+    border-collapse:collapse; margin:10px 0; font-size:15px; line-height:1.4;
+  }
+  .corpo-ref th {
+    font-family:"Inter",sans-serif; font-weight:600; font-size:13.5px;
+    background:var(--navy); color:#fff; text-align:left; padding:6px 12px;
+  }
+  .corpo-ref td { padding:6px 12px; border-bottom:1px solid var(--mist); vertical-align:top; }
+  .corpo-ref tr:nth-child(even) td { background:var(--mist); }
+  .corpo-ref td code { background:var(--mist); }
+  .corpo-ref tr:nth-child(even) td code { background:#fff; }
   .grupo-nota { color:var(--slate); font-size:15px; margin:2px 0 8px; }
   .fichas { display:flex; flex-wrap:wrap; gap:8px; }
   .ficha {
@@ -115,7 +131,8 @@
       Acorde sem espaços (<code>C7M</code>, <code>Bb7(b9)</code>, <code>F#m7</code>) ·
       inversão <code>pf</code> <code>1a</code> <code>2a</code> <code>3a</code> ·
       jogo <code>jogo6543</code> <code>jogo5432</code> <code>jogo4321</code> ·
-      opcional <code>min7</code> (a partir da casa 7).
+      opcionais <code>min7</code> (a partir da casa 7), <code>soltas</code>
+      (cordas soltas) e mais.
       Várias receitas de uma vez? Separe por vírgula.
       E dá para pedir muito mais — nomes das notas nas bolinhas, outra
       afinação, ditar a pegada casa por casa… — o
