@@ -620,8 +620,10 @@ projeto:
 ```
 
 (É exatamente o que o livro de harmonia faz.) Um push neste repositório
-atualiza o pacote (`bun add github:ziongh/GuitarStamps`), o site (GitHub Pages)
-e o plugin/skill — uma fonte só para tudo.
+atualiza o pacote-git (`bun add github:ziongh/GuitarStamps`), o site (GitHub
+Pages) e o plugin/skill — uma fonte só para tudo. A ferramenta também está
+publicada no npm: `npm i guitarstamps` / `bun add guitarstamps`, ou sem
+instalar nada, `bunx guitarstamps "C7M pf jogo5432"` (licença MIT).
 
 ### O site (para quem desenvolve)
 

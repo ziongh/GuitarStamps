@@ -373,8 +373,10 @@ fila inteira de uma vez para o livro.`,
   {
     titulo: "No computador: gerar em lote (para quem cuida do livro)",
     corpo: `Tudo desta página funciona igual no terminal — é o mesmo motor,
-instalável como o pacote <code>guitarstamps</code>
-(<code>bun add github:ziongh/GuitarStamps</code>). No terminal ele também
+publicado no npm como o pacote <code>guitarstamps</code>. Sem instalar nada:
+<code>bunx guitarstamps "C7M pf jogo5432"</code> gera o arquivo SVG na pasta
+atual; para instalar de vez, <code>bun add guitarstamps</code> (ou
+<code>npm i guitarstamps</code>). No terminal ele também
 grava arquivos: <code>-o nome.svg</code> escolhe o nome do arquivo;
 <code>--batch lista.txt</code> lê um pedido por linha (opções valem por
 linha; escreva <code>pedido =&gt; nome</code> para nomear cada arquivo);

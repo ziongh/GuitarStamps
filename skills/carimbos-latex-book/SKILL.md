@@ -22,8 +22,10 @@ SVG diagrams, then embed them on the page.
 The engine lives at the ROOT of this plugin (this repository:
 github.com/ziongh/GuitarStamps) — `cli.ts` + `src/`. The same engine also powers
 a web generator at **https://ziongh.github.io/GuitarStamps/** (useful to hand a
-non-technical author for previewing), and is installable as the npm-style
-package `guitarstamps` (`bun add github:ziongh/GuitarStamps`).
+non-technical author for previewing), and is published on npm as
+`guitarstamps` (`bun add guitarstamps`, or `bun add github:ziongh/GuitarStamps`
+to track the repo HEAD; `bunx guitarstamps "C7M pf jogo5432"` runs the CLI
+with no install).
 
 ## What you can produce
 
