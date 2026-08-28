@@ -1,6 +1,6 @@
 {
   "name": "guitarstamps",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Carimbos: guitar chord-diagram SVG generator (Drop-2 voicings, inversions, string sets) for method books — pt-BR cifragem.",
   "type": "module",
   "repository": {
