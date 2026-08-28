@@ -149,3 +149,36 @@ test("any well-formed symbol renders to an svg", () => {
     expect(makeDiagram(parseSpec(s)).svg).toContain("<svg");
   }
 });
+
+// ---- Brazilian cifragem spellings (commas, numeric slashes, shorthands) -----
+function degs(sym: string): string[] {
+  return parseChord(sym).tones.map((t) => t.degree).sort();
+}
+
+test("commas and dots inside a quality are separators: C7(9,13)", () => {
+  expect(degs("C7(9,13)")).toEqual(["1", "13", "3", "5", "9", "b7"]);
+  expect(degs("C7(b9,b13)")).toEqual(["1", "3", "5", "b13", "b7", "b9"]);
+});
+
+test("numeric slashes are extensions, not basses: C7/9, C4/7", () => {
+  expect(degs("C7/9")).toEqual(["1", "3", "5", "9", "b7"]);
+  expect(degs("C4/7")).toEqual(["1", "4", "5", "b7"]);
+  expect(degs("C7/9/13")).toEqual(["1", "13", "3", "5", "9", "b7"]);
+});
+
+test("bare-4 suspends, bare-2 adds the 9th: C4, C2", () => {
+  expect(degs("C4")).toEqual(["1", "4", "5"]);
+  expect(degs("C2")).toEqual(["1", "3", "5", "9"]);
+});
+
+test("old-school and symbol spellings: 7(b10), caret, lone M", () => {
+  expect(degs("C7(b10)")).toEqual(["#9", "1", "3", "5", "b7"]);
+  expect(degs("C^")).toEqual(["1", "3", "5", "7"]);
+  expect(degs("C^7")).toEqual(["1", "3", "5", "7"]);
+  expect(degs("CM")).toEqual(["1", "3", "5"]);
+});
+
+test("a note after the slash is still a bass, not an extension", () => {
+  const c = parseChord("Dm7/G");
+  expect(c.bass && noteName(c.bass)).toBe("G");
+});

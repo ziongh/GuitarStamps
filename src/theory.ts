@@ -243,11 +243,15 @@ const SEMI_TO_DEGREE: Record<number, string> = {
  * for. `alt` = fully-altered dominant (3, b7, b9, #9, #11, b13).
  */
 export function analyzeQuality(raw: string): string[] {
-  let q = raw.replace(/[()]/g, ""); // parens are decorative: m(maj7), 7(b9), (#11)
+  // parens, commas, dots and inner slashes are decorative/separators in
+  // cifragem: m(maj7), 7(b9), C7(9,13), C7/9, C4/7 all read as their blocks.
+  let q = raw.replace(/[(),.\/]/g, "");
   // symbol / unicode normalization
-  q = q.replace(/ø/g, "m7b5").replace(/Δ/g, "maj7").replace(/[–—−]/g, "-");
+  q = q.replace(/ø/g, "m7b5").replace(/Δ/g, "maj7").replace(/\^/g, "maj7").replace(/[–—−]/g, "-");
+  q = q.replace(/b10/g, "#9"); // the old-school "7(b10)" = 7(#9)
   q = q.replace(/°7|º7/g, "dim7").replace(/[°º]/g, "dim");
-  q = q.replace(/M7/g, "maj7").replace(/M9/g, "maj9").replace(/M11/g, "maj11").replace(/M13/g, "maj13").replace(/M6/g, "6").replace(/7M/g, "maj7").replace(/Maj/g, "maj");
+  q = q.replace(/M7/g, "maj7").replace(/M9/g, "maj9").replace(/M11/g, "maj11").replace(/M13/g, "maj13").replace(/M6/g, "6").replace(/7M/g, "maj7").replace(/9M/g, "maj9").replace(/Maj/g, "maj");
+  q = q.replace(/^M$/, ""); // a lone "M" (CM) = major triad
   q = q.replace(/\+5/g, "#5").replace(/\+9/g, "#9").replace(/\+11/g, "#11").replace(/\+/g, "aug");
   q = q.replace(/-5/g, "b5").replace(/-9/g, "b9").replace(/-13/g, "b13");
   q = q.toLowerCase().replace(/min/g, "m").replace(/-/g, "m");
@@ -279,6 +283,9 @@ export function analyzeQuality(raw: string): string[] {
   if (q !== "") throw new Error(`trecho de acorde não reconhecido "${raw}"`);
 
   const num = (n: string) => nums.includes(n);
+  // Brazilian shorthands: a bare "4" (C4, C4/7) suspends the 4th; a bare "2"
+  // (C2) adds the 9th on top of the plain triad.
+  if (!sus && num("4")) sus = "4";
   const isPower = nums.length === 1 && num("5") && !isMinor && !isDim && !isAug && !hasMaj7 && !sus && !sixNine && !altDom && addsRaw.length === 0 && alts.size === 0;
 
   const tones = new Set<string>(["1"]);
@@ -318,6 +325,7 @@ export function analyzeQuality(raw: string): string[] {
 
   // any explicit alteration not yet placed becomes an added colour tone
   for (const a of alts) if (a !== "b5" && a !== "#5" && !tones.has(a)) tones.add(a);
+  if (num("2") && !sus) tones.add("9"); // C2 = add9
   // added tones
   for (const a of addsRaw) {
     const t = a.replace(/^2$/, "9").replace(/^4$/, "11");
