@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gerador de Carimbos</title>
+<style>
+  /* ---- as fontes do livro (assets/fonts — SIL OFL; ver fonts/LICENSES.md) -- */
+  @font-face { font-family:"Inter"; src:url(fonts/Inter-Regular.otf);  font-weight:400; font-display:swap; }
+  @font-face { font-family:"Inter"; src:url(fonts/Inter-SemiBold.otf); font-weight:600 800; font-display:swap; }
+  @font-face { font-family:"Edwin"; src:url(fonts/Edwin-Roman.otf);    font-weight:400; font-display:swap; }
+  /* acidentes ♭ ♮ ♯ vêm da Bravura Text — os MESMOS glifos do livro (§5) */
+  @font-face { font-family:"Inter"; src:url(fonts/BravuraText.otf); font-weight:100 900;
+               unicode-range:U+266D-266F,U+1D12A-1D12B; font-display:swap; }
+
+  /* ---- a paleta do livro (colors.tex §6.1) --------------------------------- */
+  :root {
+    --navy:#1E3A5F; --ink:#222A33; --slate:#63727F; --mist:#EEF2F7;
+    --paper:#FCFBF8; --blue:#2E6CA0; --blue-soft:#E7EEF5;
+    --terra:#C25B40; --terra-soft:#F6E8E1; --ochre-soft:#FAF1DA;
+  }
+  * { box-sizing:border-box; }
+  body {
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:"Edwin",Georgia,serif; font-size:17px; line-height:1.55;
+  }
+  header {
+    background:var(--navy); color:#fff; padding:26px 22px 22px;
+  }
+  header h1 { margin:0; font-family:"Inter",sans-serif; font-weight:600; font-size:26px; }
+  header p  { margin:6px 0 0; color:#C9D4E0; font-size:15.5px; max-width:56em; }
+  main { max-width:980px; margin:0 auto; padding:22px; }
+
+  .painel {
+    background:#fff; border:1px solid var(--mist); border-radius:8px;
+    padding:18px 18px 14px; box-shadow:0 1px 3px rgba(30,58,95,.06);
+  }
+  label { font-family:"Inter",sans-serif; font-weight:600; color:var(--navy); font-size:15px; }
+  textarea {
+    width:100%; margin-top:8px; padding:12px 14px; font-size:19px;
+    font-family:"Inter",sans-serif; color:var(--ink);
+    border:1.5px solid var(--slate); border-radius:6px; resize:vertical;
+    min-height:58px; background:var(--paper);
+  }
+  textarea:focus { outline:none; border-color:var(--blue); background:#fff; }
+  .molde { color:var(--slate); font-size:14.5px; margin:8px 0 0; }
+  .molde code, .dica-vazia code {
+    font-family:"Inter",sans-serif; background:var(--mist); border-radius:4px;
+    padding:1px 6px; font-size:.92em; color:var(--navy);
+  }
+  .acoes { display:flex; align-items:center; gap:12px; margin-top:10px; flex-wrap:wrap; }
+  button {
+    font-family:"Inter",sans-serif; font-weight:600; font-size:14.5px;
+    border-radius:6px; border:1px solid var(--navy); cursor:pointer;
+    background:var(--navy); color:#fff; padding:8px 14px;
+  }
+  button:disabled { opacity:.45; cursor:default; }
+  #aviso-copia { color:var(--terra); font-family:"Inter",sans-serif; font-size:14px; }
+
+  #saida { display:flex; flex-wrap:wrap; gap:16px; margin-top:20px; align-items:flex-start; }
+  .carta {
+    background:#fff; border:1px solid var(--mist); border-radius:8px;
+    padding:14px; box-shadow:0 1px 3px rgba(30,58,95,.06);
+  }
+  .desenho svg { display:block; max-width:280px; height:auto; }
+  .carta-acoes { margin-top:8px; text-align:center; }
+  .carta-acoes button {
+    background:#fff; color:var(--navy); border-color:var(--slate); font-weight:400;
+    padding:5px 10px; font-size:13px;
+  }
+  .carta-erro { background:var(--ochre-soft); border-color:#E5C87F; max-width:420px; }
+  .erro-titulo { margin:0; font-family:"Inter",sans-serif; font-weight:600; color:var(--navy); }
+  .erro-msg { margin:6px 0 0; font-size:15px; white-space:pre-wrap; }
+  .aviso { color:var(--terra); font-size:14px; margin:8px 0 0; max-width:280px; }
+  .dica-vazia { color:var(--slate); }
+
+  h2 {
+    font-family:"Inter",sans-serif; font-weight:600; color:var(--navy);
+    font-size:20px; margin:40px 0 4px; border-bottom:2px solid var(--mist);
+    padding-bottom:6px;
+  }
+  .grupo-exemplos h3 { font-family:"Inter",sans-serif; font-weight:600; color:var(--blue);
+                       font-size:16.5px; margin:22px 0 2px; }
+  .grupo-nota { color:var(--slate); font-size:15px; margin:2px 0 8px; }
+  .fichas { display:flex; flex-wrap:wrap; gap:8px; }
+  .ficha {
+    background:var(--blue-soft); color:var(--navy); border:1px solid #CBD9E6;
+    font-weight:400; font-size:14.5px; padding:6px 12px;
+  }
+  .ficha:hover { background:var(--navy); color:#fff; }
+
+  .comofunciona { background:var(--terra-soft); border:1px solid #E7C4B4;
+    border-left:4px solid var(--terra); border-radius:6px; padding:12px 16px; margin-top:26px; }
+  .comofunciona p { margin:6px 0; }
+  .comofunciona strong { font-family:"Inter",sans-serif; font-weight:600; }
+  footer { color:var(--slate); font-size:13.5px; text-align:center; padding:30px 20px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Gerador de Carimbos</h1>
+  <p>Digite a receita de um diagrama de acorde e veja o desenho na hora —
+     igualzinho ao que vai sair no livro. Nada aqui entra no livro sozinho:
+     quando gostar do resultado, copie a linha para o Word e rode
+     <b>/atualizar</b> no Claude.</p>
+</header>
+<main>
+  <div class="painel">
+    <label for="entrada">Receita — <span style="font-weight:400">ACORDE&nbsp;&nbsp;INVERSÃO&nbsp;&nbsp;JOGO</span></label>
+    <textarea id="entrada" spellcheck="false" placeholder="C7M pf jogo5432"></textarea>
+    <p class="molde">
+      Acorde sem espaços (<code>C7M</code>, <code>Bb7(b9)</code>, <code>F#m7</code>) ·
+      inversão <code>pf</code> <code>1a</code> <code>2a</code> <code>3a</code> ·
+      jogo <code>jogo6543</code> <code>jogo5432</code> <code>jogo4321</code> ·
+      opcional <code>min7</code> (a partir da casa 7).
+      Várias receitas de uma vez? Separe por vírgula.
+    </p>
+    <div class="acoes">
+      <button id="copiar-word">Copiar linha para o Word</button>
+      <span id="aviso-copia"></span>
+    </div>
+  </div>
+
+  <div id="saida"></div>
+
+  <h2>Exemplos — clique para experimentar</h2>
+  <div id="galeria"></div>
+
+  <div class="comofunciona">
+    <p><strong>🎸 Como levar para o livro:</strong> ajuste a receita até o desenho
+       ficar do seu agrado, clique em <strong>“Copiar linha para o Word”</strong> e
+       cole no capítulo, no lugar onde a figura deve entrar. Complete a legenda,
+       salve o Word e rode <strong>/atualizar</strong> no Claude — ele gera a
+       figura em qualidade de impressão e monta a página.</p>
+  </div>
+</main>
+<footer>
+  Método de Harmonia para Guitarra · os desenhos usam as fontes do livro
+  (Inter, Edwin e Bravura — licença SIL OFL, ver fonts/LICENSES.md) ·
+  <a href="https://github.com/ziongh/GuitarStamps" style="color:inherit">código no GitHub</a>.
+</footer>
+<script type="module" src="app.js"></script>
+</body>
+</html>

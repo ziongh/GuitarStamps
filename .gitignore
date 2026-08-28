@@ -27,3 +27,6 @@ Thumbs.db
 .env
 .env.*
 *.log
+
+# Static site build output (site/build.sh -> GitHub Pages via Actions)
+/site/dist/

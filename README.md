@@ -7,6 +7,12 @@ Você pede em linguagem de músico — *"a 3ª inversão de C♯m7 com o baixo n
 corda"* — e a ferramenta calcula o **Drop-2** correto e devolve um diagrama
 limpo, em alta qualidade, pronto para o livro.
 
+> **🌐 Sem instalar nada: use o site.** O gerador roda inteiro no navegador em
+> **<https://ziongh.github.io/GuitarStamps/>** — digite a receita (ex.:
+> `C7M pf jogo5432`), veja o desenho na hora, clique nos exemplos prontos e
+> copie a linha para o Word. Todo o resto deste manual (terminal, instalação)
+> só é necessário para gerar os arquivos do livro em lote.
+
 > **Para quem é este manual.** Ele parte do princípio de que você domina
 > harmonia e o violão/guitarra (Drop-2, inversões, tensões, encordoamento — esse
 > vocabulário é seu). O que ele **não** pressupõe é qualquer familiaridade com
@@ -557,6 +563,17 @@ quebrou rodando os testes automáticos:
 ```
 bun test
 ```
+
+---
+
+### O site (para quem desenvolve)
+
+A pasta `site/` contém o **Gerador de Carimbos** — uma página estática que
+empacota o motor (`src/`) para rodar no navegador, com as fontes do livro
+(SIL OFL, em `site/fonts/`). `bash site/build.sh` testa todos os exemplos da
+galeria e gera `site/dist/`; o workflow `.github/workflows/pages.yml` publica
+o `dist/` no GitHub Pages a cada push na `main`. A página aceita `?r=<receita>`
+na URL para chegar com o campo preenchido.
 
 ---
 
